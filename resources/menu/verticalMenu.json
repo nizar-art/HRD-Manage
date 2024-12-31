@@ -1,0 +1,80 @@
+
+{
+  "menu": [
+    {
+      "url": "dashboard",
+      "name": "Dashboard",
+      "icon": "menu-icon tf-icons ti ti-smart-home",
+      "slug": "dashboard"
+    },
+    {
+      "menuHeader": "Data"
+    },
+
+    {
+      "name": "Users",
+      "icon": "menu-icon tf-icons ti ti-users",
+      "permission": "admin.users.view",
+      "slug": "user",
+      "submenu": [
+        {
+          "url": "users/user-management/view",
+          "name": "User Management",
+          "slug": "users-user-management"
+        }
+      ]
+    },
+    {
+      "name": "Data HRD",
+      "icon": "menu-icon tf-icons ti ti-clipboard-data",
+      "slug": "hrd",
+      "submenu": [
+        {
+          "url": "profile/list",
+          "name": "Pribadi Karyawan",
+          "slug": "hrd-profile-karyawan-list"
+        },
+        {
+          "url": "informasi/kepegawaian",
+          "name": "Informasi Kepegawaian",
+          "slug": "hrd-informasi-kepegawaian"
+        },
+        {
+          "url": "kontrak/kerja",
+          "name": "Kontrak Kerja",
+          "slug": "hrd-kontrak-kerja"
+        }
+      ]
+    },
+    {
+      "name": "Data Category",
+      "icon": "menu-icon tf-icons ti ti-brand-databricks",
+      "slug": "category",
+      "submenu": [
+        {
+          "url": "category/department",
+          "name": "Category Department",
+          "slug": "category-department"
+        },
+        {
+          "url": "category/jabatan",
+          "name": "Category Jabatan",
+          "slug": "category-jabatan"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Settings"
+    },
+    {
+      "url": "account-settings-account",
+      "name": "Account",
+      "icon": "menu-icon tf-icons ti ti-user",
+      "slugs": [
+        "pages-account-settings-account",
+        "pages-account-settings-security",
+        "pages-account-settings-notifications"
+      ]
+    }
+  ]
+}
