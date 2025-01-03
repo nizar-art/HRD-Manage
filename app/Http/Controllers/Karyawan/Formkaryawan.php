@@ -12,21 +12,20 @@ use App\Models\Regencies;
 use App\Models\Districts;
 use App\Models\Villages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class Formkaryawan extends Controller
 {
   public function index()
   {
-      $userId = Auth::id();
-
-      // Cari data karyawan terkait user
-      $karyawan = Karyawan::where('user_id', $userId)->first();
-
-      // Cek apakah data karyawan ditemukan
-      $karyawanId = $karyawan ? $karyawan->id : null;
+    $userId = Auth::id();
+        $karyawan = Karyawan::where('user_id', $userId)->first();
+        $karyawanId = $karyawan ? $karyawan->id : null;
 
       // Ambil data provinsi
-      $provinsis = Provinces::all();
+      $response = Http::get('https://ibnux.github.io/data-indonesia/provinsi.json');
+        $provinsis = $response->successful() ? $response->json() : [];
+
 
       // Mengirimkan data ke view
       $pageConfigs = ['myLayout' => 'front'];
@@ -68,7 +67,7 @@ class Formkaryawan extends Controller
       $alamatDomisili = $request->input('alamat_domisili', $request->input('alamat_ktp'));
 
       $formatAlamat = function ($alamat) {
-          return "{$alamat['jalan']}, RT {$alamat['rt']}/RW {$alamat['rw']}, DESA {$alamat['desa']}, KECAMATAN {$alamat['kecamatan']}, {$alamat['kabupaten']}, PROVINSI {$alamat['provinsi']}";
+        return "{$alamat['jalan']}, RT {$alamat['rt']}/RW {$alamat['rw']}, Desa {$alamat['desa']}, Kec. {$alamat['kecamatan']}, Kab. {$alamat['kabupaten']}, Prov. {$alamat['provinsi']}";
       };
 
       $alamatKtp = $formatAlamat($request->input('alamat_ktp'));
@@ -94,7 +93,8 @@ class Formkaryawan extends Controller
           'status_pernikahan' => $request->input('status_pernikahan'),
       ]);
 
-      return response()->json(['message' => 'Data berhasil disimpan', 'data' => $karyawan], 201);
+      // return response()->json(['message' => 'Data berhasil disimpan', 'data' => $karyawan], 201);
+      return redirect()->route('view-karywan')->with('success', 'Data berhasil disimpan');
   }
 
   // Store data for Riwayat Pendidikan
@@ -207,21 +207,37 @@ class Formkaryawan extends Controller
 
   public function getKabupaten(Request $request)
   {
-      $kabupatens = Regencies::where('province_id', $request->provinsi_id)->get();
-      return response()->json($kabupatens);
+      $provinsiId = $request->input('provinsi_id');
+      $response = Http::get("https://ibnux.github.io/data-indonesia/kabupaten/{$provinsiId}.json");
+
+      if ($response->failed()) {
+          return response()->json([], 500);
+      }
+      return response()->json($response->json());
   }
 
-  public function getKecamatan(Request $request)
-  {
-      $kecamatans = Districts::where('regency_id', $request->kabupaten_id)->get();
-      return response()->json($kecamatans);
-  }
 
-  public function getDesa(Request $request)
-  {
-      $desas = Villages::where('district_id', $request->kecamatan_id)->get();
-      return response()->json($desas);
-  }
+    public function getKecamatan(Request $request)
+    {
+        $kabupatenId = $request->input('kabupaten_id');
+        $response = Http::get("https://ibnux.github.io/data-indonesia/kecamatan/{$kabupatenId}.json");
+
+        if ($response->failed()) {
+            return response()->json([], 500);
+        }
+        return response()->json($response->json());
+    }
+
+     public function getDesa(Request $request)
+    {
+        $kecamatanId = $request->input('kecamatan_id');
+        $response = Http::get("https://ibnux.github.io/data-indonesia/kelurahan/{$kecamatanId}.json");
+
+        if ($response->failed()) {
+            return response()->json([], 500);
+        }
+        return response()->json($response->json());
+    }
 
 
 }

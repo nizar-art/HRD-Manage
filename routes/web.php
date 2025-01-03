@@ -170,7 +170,6 @@ use App\Http\Controllers\Karyawan\EditKeluargaKaryawan;
 use App\Http\Controllers\Karyawan\EditPendidikanKaryawan;
 use App\Http\Controllers\Karyawan\FormProfile;
 use App\Http\Controllers\Karyawan\ViewKaryawan;
-use App\Http\Controllers\maps\Leaflet;
 
 // Main Page Route
 Route::get('/', [LoginCover::class, 'index'])->name('auth-login-cover');
@@ -210,7 +209,7 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/form/karyawan/storeKeluarga', [Formkaryawan::class, 'storeKeluarga'])->name('Form-karyawan-storeKeluarga');
 
   //form karyawan
-  Route::get('/form/pribadi/karyawan', [FormProfile::class, 'index'])->name('form-pribadi-karyawan');
+Route::get('/form/pribadi/karyawan', [FormProfile::class, 'index'])->name('form-pribadi-karyawan');
 
   // User
   Route::get('/user/profile', [UserProfile::class, 'index'])->name('pages-profile-user');

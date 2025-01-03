@@ -23,13 +23,17 @@
     <div class="container" style="margin-top: 5rem; margin-bottom:5rem">
         <div class="row">
             <div class="d-flex flex-column justify-content-center align-items-center text-center mb-6 row-gap-4">
-              <div class="d-flex flex-column justify-content-center">
-                  <h4 class="mb-1">Formulir Profile Karyawan</h4>
-                  <p class="mb-0">Make sure this form is filled out completely and accurately</p>
-              </div>
+                <div class="d-flex flex-column justify-content-center">
+                    <h4 class="mb-1">Formulir Profile Karyawan</h4>
+                    <p class="mb-0">Make sure this form is filled out completely and accurately</p>
+                </div>
             </div>
             <div class="card mb-6">
-                <form id="form-data-pribadi" class="needs-validation">
+
+                <form id="form-data-pribadi" method="POST" action="{{ route('Form-karyawan-storeKaryawan') }}"
+                    class="needs-validation">
+                    @csrf
+
                     <div id="data-pribadi" class="content">
                         <div class="card-header mb-4">
                             <h6 class="mb-0">Data Pribadi</h6>
@@ -89,15 +93,15 @@
                                 <div class="col-xl-4 col-md-6 col-sm-12 mb-6">
                                     <select id="provinsi_ktp" name="alamat_ktp[provinsi]" class="select2" required>
                                         <option selected disabled>Pilih Provinsi</option>
-                                        @foreach ($provinsis as $provinsi)
-                                            <option value="{{ $provinsi->id }}">{{ $provinsi->name }}</option>
-                                        @endforeach
                                     </select>
+                                    <input type="hidden" name="alamat_ktp[provinsi_nama]" id="provinsi_ktp_nama">
                                 </div>
                                 <div class="col-xl-4 col-md-6 col-sm-12 mb-6">
-                                    <select id="kabupaten_ktp" name="alamat_ktp[kabupaten]" class="select2" required>
+                                    <select id="kabupaten_ktp" name="alamat_ktp[kabupaten]" class="select2"
+                                        data-selected="{{ old('alamat_ktp.kabupaten') }}" required>
                                         <option selected disabled>Pilih Kabupaten</option>
                                     </select>
+
                                 </div>
                                 <div class="col-xl-4 col-md-6 col-sm-12 mb-6">
                                     <select id="kecamatan_ktp" name="alamat_ktp[kecamatan]" class="select2" required>
@@ -137,26 +141,29 @@
                                 <div class="col-xl-4 col-md-6 col-sm-12 mb-6">
                                     <select id="provinsi_domisili" name="alamat_domisili[provinsi]" class="select2">
                                         <option selected disabled>Pilih Provinsi</option>
-                                        @foreach ($provinsis as $provinsi)
-                                            <option value="{{ $provinsi->id }}">{{ $provinsi->name }}</option>
-                                        @endforeach
                                     </select>
+                                    <input type="hidden" name="alamat_domisili[provinsi_nama]"
+                                        id="provinsi_domisili_nama">
                                 </div>
+
                                 <div class="col-xl-4 col-md-6 col-sm-12 mb-6">
                                     <select id="kabupaten_domisili" name="alamat_domisili[kabupaten]" class="select2">
                                         <option selected disabled>Pilih Kabupaten</option>
                                     </select>
                                 </div>
+
                                 <div class="col-xl-4 col-md-6 col-sm-12 mb-6">
                                     <select id="kecamatan_domisili" name="alamat_domisili[kecamatan]" class="select2">
                                         <option selected disabled>Pilih Kecamatan</option>
                                     </select>
                                 </div>
+
                                 <div class="col-xl-4 col-md-6 col-sm-12 mb-6">
                                     <select id="desa_domisili" name="alamat_domisili[desa]" class="select2">
-                                        <option selected disabled>Pilih desa</option>
+                                        <option selected disabled>Pilih Desa</option>
                                     </select>
                                 </div>
+
 
                                 <!-- Email, Agama, dan Data Lainnya -->
                                 <div class="col-md-6 col-sm-12 mb-6">
@@ -186,16 +193,18 @@
 
                                 <!-- Nomor NPWP -->
                                 <div class="col-md-6 col-sm-12 mb-6">
-                                  <label class="form-label" for="nomor_npwp">Nomor NPWP <span class="text">(Opsional)</span></label>
-                                  <input type="number" id="nomor_npwp" name="nomor_npwp" class="form-control"
-                                      placeholder="Masukkan Nomor NPWP" />
+                                    <label class="form-label" for="nomor_npwp">Nomor NPWP <span
+                                            class="text">(Opsional)</span></label>
+                                    <input type="number" id="nomor_npwp" name="nomor_npwp" class="form-control"
+                                        placeholder="Masukkan Nomor NPWP" />
                                 </div>
 
                                 <!-- Nomor Rekening -->
                                 <div class="col-md-6 col-sm-12 mb-6">
-                                  <label class="form-label" for="nomor_rekening">Nomor Rekening <span class="text">(Opsional)</span></label>
-                                  <input type="text" id="nomor_rekening" name="nomor_rekening" class="form-control"
-                                      placeholder="Contoh: BCA 123" />
+                                    <label class="form-label" for="nomor_rekening">Nomor Rekening <span
+                                            class="text">(Opsional)</span></label>
+                                    <input type="text" id="nomor_rekening" name="nomor_rekening" class="form-control"
+                                        placeholder="Contoh: BCA 123" />
                                 </div>
 
                                 <!-- Nomor HP -->

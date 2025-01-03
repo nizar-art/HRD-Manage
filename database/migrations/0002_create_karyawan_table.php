@@ -24,8 +24,8 @@ return new class extends Migration
       $table->string('email')->unique();
       $table->enum('agama', ['Islam', 'Kristen', 'Katolik', 'Konghucu', 'Budha', 'Hindu']);
       $table->string('nomor_nik_ktp', 16);
-      $table->string('nomor_npwp', 20)->default();
-      $table->string('nomor_rekening', 20)->default();
+      $table->string('nomor_npwp', 20)->nullable();
+      $table->string('nomor_rekening', 20)->nullable();
       $table->string('nomor_hp', 15);
       $table->enum('golongan_darah', ['A', 'B', 'O', 'AB', 'A-', 'B-', 'O-', 'AB-']);
       $table->string('ibu_kandung');

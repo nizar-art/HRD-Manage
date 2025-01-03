@@ -5,36 +5,31 @@ namespace App\Http\Controllers\Karyawan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Karyawan;
-use App\Models\RiwayatPendidikan;
-use App\Models\Keluarga;
-use App\Models\Provinces;
-use App\Models\Regencies;
-use App\Models\Districts;
-use App\Models\Villages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class FormProfile extends Controller
 {
-  public function index()
-  {
-    $userId = Auth::id();
+    public function index()
+    {
+        $userId = Auth::id();
+        $karyawan = Karyawan::where('user_id', $userId)->first();
+        $karyawanId = $karyawan ? $karyawan->id : null;
 
-    // Cari data karyawan terkait user
-    $karyawan = Karyawan::where('user_id', $userId)->first();
+        // Fetch data provinsi dari API eksternal
+        $response = Http::get('https://ibnux.github.io/data-indonesia/provinsi.json');
+        $provinsis = $response->successful() ? $response->json() : [];
 
-    // Cek apakah data karyawan ditemukan
-    $karyawanId = $karyawan ? $karyawan->id : null;
+        $pageConfigs = ['myLayout' => 'front'];
+        if (empty($provinsis)) {
+          session()->flash('error', 'Gagal mengambil data provinsi.');
+      }
+      
 
-    // Ambil data provinsi
-    $provinsis = Provinces::all();
-
-    // Mengirimkan data ke view
-    $pageConfigs = ['myLayout' => 'front'];
-
-    return view('content.Karyawan.form-profile-karyawan',[
-          'pageConfigs' => $pageConfigs,
-          'karyawanId' => $karyawanId,
-          'provinsis' => $provinsis,
-      ]);
-  }
+        return view('content.Karyawan.form-profile-karyawan', [
+            'pageConfigs' => $pageConfigs,
+            'karyawanId' => $karyawanId,
+           'provinsis' => $provinsis,
+        ]);
+    }
 }
