@@ -34,6 +34,7 @@ class Karyawan extends Model
         'agama',
         'nomor_nik_ktp',
         'nomor_npwp',
+        'nomor_rekening',
         'nomor_hp',
         'golongan_darah',
         'ibu_kandung',

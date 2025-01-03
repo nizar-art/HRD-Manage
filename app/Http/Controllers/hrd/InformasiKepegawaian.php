@@ -24,6 +24,7 @@ class InformasiKepegawaian extends Controller
     {
         $request->validate([
             'id_karyawan' => 'required|exists:karyawan,id',
+            'perusahaan' => 'required|string|in:LKI,Green Cold',
             'nomer_kerja' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
             'id_department' => 'required|exists:department,id',
@@ -33,6 +34,7 @@ class InformasiKepegawaian extends Controller
 
         $kepegawaian = Kepegawaian::create([
             'id_karyawan' => $request->id_karyawan,
+            'perusahaan' => $request->perusahaan,
             'nomer_kerja' => $request->nomer_kerja,
             'tanggal_masuk' => $request->tanggal_masuk,
             'id_department' => $request->id_department,
@@ -55,6 +57,7 @@ class InformasiKepegawaian extends Controller
             return [
                 'id' => $kepegawaian->id,
                 'nama_lengkap' => $kepegawaian->karyawan ? ucfirst($kepegawaian->karyawan->nama_lengkap) : null,
+                'perusahaan' => $kepegawaian->perusahaan,
                 'nomer_kerja' => $kepegawaian->nomer_kerja,
                 'tanggal_masuk' => $kepegawaian->tanggal_masuk ? $kepegawaian->tanggal_masuk->format('Y-m-d') : null,
                 'name_jabatan' => $kepegawaian->jabatan->name_jabatan ??'-',
@@ -82,6 +85,7 @@ class InformasiKepegawaian extends Controller
     {
         $request->validate([
             'id_karyawan' => 'required|exists:karyawan,id',
+            'perusahaan' => 'required|string|in:LKI,Green Cold',
             'nomer_kerja' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
             'id_department' => 'required|exists:department,id',
@@ -92,6 +96,7 @@ class InformasiKepegawaian extends Controller
         $kepegawaian = Kepegawaian::findOrFail($id);
         $kepegawaian->update([
             'id_karyawan' => $request->id_karyawan,
+            'perusahaan' => $request->perusahaan,
             'nomer_kerja' => $request->nomer_kerja,
             'tanggal_masuk' => $request->tanggal_masuk,
             'id_department' => $request->id_department,

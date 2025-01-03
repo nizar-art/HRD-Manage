@@ -24,6 +24,7 @@ class Kepegawaian extends Model
      */
     protected $fillable = [
         'id_karyawan',
+        'perusahaan',
         'nomer_kerja',
         'tanggal_masuk',
         'id_department',

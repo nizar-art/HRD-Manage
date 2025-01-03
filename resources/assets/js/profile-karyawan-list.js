@@ -123,10 +123,10 @@ $(function () {
             var jenisKelamin = full['jenis_kelamin'];
             var badgeClass;
             switch (jenisKelamin) {
-              case 'L':
+              case 'Laki-laki':
                 badgeClass = 'bg-label-info';
                 break;
-              case 'P':
+              case 'Perempuan':
                 badgeClass = 'bg-label-danger';
                 break;
             }
@@ -489,7 +489,7 @@ $(function () {
 
 
   $(document).on('click', '.edit-record', function () {
-    var user_id = $(this).data('id'); // Ambil ID dari tombol
+    const user_id = $(this).data('id'); // Ambil ID dari tombol
     var dtrModal = $('.dtr-bs-modal.show');
 
     // Sembunyikan modal responsif (jika ada)

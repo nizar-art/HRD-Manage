@@ -12,6 +12,7 @@ $(function () {
     userView = baseUrl + 'app/user/view/account',
     offCanvasForm = $('#offcanvasAddUser');
 
+
   if (select2.length) {
     var $this = select2;
     $this.wrap('<div class="position-relative"></div>').select2({
@@ -40,6 +41,7 @@ $(function () {
         { data: '' },
         { data: 'id' },
         { data: 'nama_lengkap' },
+        { data: 'perusahaan' },
         { data: 'nomer kerja' },
         { data: 'tanggal_masuk' },
         { data: 'nama_jabatan' },
@@ -80,8 +82,33 @@ $(function () {
           }
       },
       {
+        // perusahaan
+        targets: 3,
+        render: function (data, type, full, meta) {
+          var jenisKelamin = full['perusahaan'];
+          var badgeClass;
+          switch (jenisKelamin) {
+            case 'LKI':
+              badgeClass = 'bg-label-primary';
+              break;
+            case 'Green Cold':
+              badgeClass = 'bg-label-success';
+              break;
+          }
+          return (
+            '<div class="d-flex justify-content-center align-items-center">' +
+            '<span class="badge ' +
+            badgeClass +
+            ' text-capitalize">' +
+            jenisKelamin +
+            '</span>' +
+            '</div>'
+          );
+        }
+      },
+      {
           // Jenis Kelamin
-          targets: 3,
+          targets: 4,
           render: function (data, type, full, meta) {
             var nomerKerja = full['nomer_kerja'];
             return '<span class="text-heading text-wrap fw-medium">' + nomerKerja + '</span>';
@@ -89,7 +116,7 @@ $(function () {
       },
       {
           // Tempat Lahir
-          targets: 4,
+          targets: 5,
           render: function (data, type, full, meta) {
             var tanggalMasuk = full['tanggal_masuk'];
             return '<span class="text-heading text-wrap fw-medium">' + tanggalMasuk + '</span>';
@@ -97,7 +124,7 @@ $(function () {
       },
       {
           // Tanggal Lahir
-          targets: 5,
+          targets: 6,
           render: function (data, type, full, meta) {
               var jabatan = full['name_jabatan'];
               return '<span class="text-heading text-wrap fw-medium">' + jabatan + '</span>';
@@ -105,7 +132,7 @@ $(function () {
       },
       {
           // Alamat Email
-          targets: 6,
+          targets: 7,
           render: function (data, type, full, meta) {
               var departemen = full['name_department'];
               return '<span class="text-heading text-wrap fw-medium">' + departemen + '</span>';
@@ -113,7 +140,7 @@ $(function () {
       },
       {
         // Alamat Email
-        targets: 7,
+        targets: 8,
         render: function (data, type, full, meta) {
             var lokasiKerja = full['lokasi_kerja'];
             return '<span class="text-heading text-wrap fw-medium">' + lokasiKerja + '</span>';
@@ -174,138 +201,70 @@ $(function () {
           buttons: [
             {
               extend: 'print',
-              title: 'Users',
+              title: 'Informasi Kepegawaian',
               text: '<i class="ti ti-printer me-2" ></i>Print',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be print
+                columns: [1, 2, 3, 4, 5, 6, 7], // Sesuai dengan kolom yang tersedia
                 format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
+                  body: function (inner, colIndex) {
+                    return $(inner).text();
                   }
                 }
-              },
-              customize: function (win) {
-                //customize print view for dark
-                $(win.document.body)
-                  .css('color', config.colors.headingColor)
-                  .css('border-color', config.colors.borderColor)
-                  .css('background-color', config.colors.body);
-                $(win.document.body)
-                  .find('table')
-                  .addClass('compact')
-                  .css('color', 'inherit')
-                  .css('border-color', 'inherit')
-                  .css('background-color', 'inherit');
               }
             },
             {
               extend: 'csv',
-              title: 'Users',
+              title: 'Informasi Kepegawaian',
               text: '<i class="ti ti-file-text me-2" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
+                columns: [1, 2, 3, 4, 5, 6, 7], // Sesuai dengan kolom yang tersedia
                 format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
+                  body: function (inner, colIndex) {
+                    return $(inner).text();
                   }
                 }
               }
             },
             {
               extend: 'excel',
-              title: 'Users',
+              title: 'Informasi Kepegawaian',
               text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
+                columns: [1, 2, 3, 4, 5, 6, 7], // Sesuai dengan kolom yang tersedia
                 format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
+                  body: function (inner, colIndex) {
+                    return $(inner).text();
                   }
                 }
               }
             },
             {
               extend: 'pdf',
-              title: 'Users',
+              title: 'Informasi Kepegawaian',
               text: '<i class="ti ti-file-code-2 me-2"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
+                columns: [1, 2, 3, 4, 5, 6, 7], // Sesuai dengan kolom yang tersedia
                 format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
+                  body: function (inner, colIndex) {
+                    return $(inner).text();
                   }
                 }
               }
             },
             {
               extend: 'copy',
-              title: 'Users',
+              title: 'Informasi Kepegawaian',
               text: '<i class="ti ti-copy me-2" ></i>Copy',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
+                columns: [1, 2, 3, 4, 5, 6, 7], // Sesuai dengan kolom yang tersedia
                 format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
+                  body: function (inner, colIndex) {
+                    return $(inner).text();
                   }
                 }
               }
@@ -440,6 +399,7 @@ $(function () {
             // Populate the form with the data
             $('#id').val(data.id);
             $('#id_karyawan').val(data.id_karyawan); // Assuming dropdown or input
+            $('#perusahaan').val(data.perusahaan);
             $('#nomer_kerja').val(data.nomer_kerja);
             $('#tanggal_masuk').val(data.tanggal_masuk);
             $('#id_department').val(data.id_department); // Assuming dropdown or input
@@ -478,10 +438,17 @@ $(function () {
           }
         }
       },
+      perusahaan: {
+        validators: {
+          notEmpty: {
+            message: 'Silakan pilih perusahaan'
+          }
+        }
+      },
       nomer_kerja: {
         validators: {
           notEmpty: {
-            message: 'Silakan masukkan nomor induk karyawan'
+            message: 'Silakan masukkan nik kerja'
           }
         }
       },

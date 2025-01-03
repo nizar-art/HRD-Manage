@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('id_karyawan')->constrained('karyawan')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_department')->constrained('department')->onDelete('no action')->onUpdate('cascade');
             $table->foreignId('id_jabatan')->constrained('jabatan')->onDelete('no action')->onUpdate('cascade');
+            $table->enum('perusahaan', ['LKI', 'Green Cold']);
             $table->string('nomer_kerja', 50);
             $table->date('tanggal_masuk');
             $table->string('lokasi_kerja', 50);

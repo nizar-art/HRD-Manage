@@ -168,7 +168,7 @@ use App\Http\Controllers\hrd\ProfileKaryawanAdd;
 use App\Http\Controllers\hrd\ProfileKaryawanList;
 use App\Http\Controllers\Karyawan\EditKeluargaKaryawan;
 use App\Http\Controllers\Karyawan\EditPendidikanKaryawan;
-use App\Http\Controllers\Karyawan\EditProfileKaryawan;
+use App\Http\Controllers\Karyawan\FormProfile;
 use App\Http\Controllers\Karyawan\ViewKaryawan;
 use App\Http\Controllers\maps\Leaflet;
 
@@ -208,6 +208,10 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/form/karyawan/storeKaryawan', [Formkaryawan::class, 'storeKaryawan'])->name('Form-karyawan-storeKaryawan');
   Route::post('/form/karyawan/storeRiwayatPendidikan', [Formkaryawan::class, 'storeRiwayatPendidikan'])->name('Form-karyawan-storeRiwayatPendidikan');
   Route::post('/form/karyawan/storeKeluarga', [Formkaryawan::class, 'storeKeluarga'])->name('Form-karyawan-storeKeluarga');
+
+  //form karyawan
+  Route::get('/form/pribadi/karyawan', [FormProfile::class, 'index'])->name('form-pribadi-karyawan');
+
   // User
   Route::get('/user/profile', [UserProfile::class, 'index'])->name('pages-profile-user');
   Route::get('/account-settings-account', [AccountSettingsAccount::class, 'index'])->name('pages-account-settings-account');

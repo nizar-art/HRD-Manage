@@ -117,7 +117,8 @@
                         <th></th>
                         <th>Id</th>
                         <th>nama karyawan</th>
-                        <th>nomer kerja</th>
+                        <th class="text-center">Perusahaan</th>
+                        <th>NIK Kerja</th>
                         <th>tanggal masuk</th>
                         <th>jabatan</th>
                         <th>department</th>
@@ -144,6 +145,15 @@
                         @foreach ($karyawan as $karyawan)
                           <option value="{{ $karyawan->id }}">{{ $karyawan->nama_lengkap}}</option>
                         @endforeach
+                      </select>
+                    </div>
+                    <!-- Perusahaan -->
+                    <div class="mb-6">
+                      <label class="form-label" for="perusahaan">Perusahaan</label>
+                      <select id="perusahaan" name="perusahaan" class="form-select ">
+                        <option value="" disabled selected>Select a company</option>
+                        <option value="LKI">LKI</option>
+                        <option value="Green Cold">Green Cold</option>
                       </select>
                     </div>
                     <!-- Nomor Induk Karyawan -->

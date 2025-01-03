@@ -14,8 +14,9 @@ return new class extends Migration
     Schema::create('karyawan', function (Blueprint $table) {
       $table->id();
       $table->unsignedBigInteger('user_id');
+      $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
       $table->string('nama_lengkap', 255);
-      $table->enum('jenis_kelamin', ['L', 'P']);
+      $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
       $table->string('tempat_lahir');
       $table->date('tanggal_lahir');
       $table->text('alamat_ktp');
@@ -24,6 +25,7 @@ return new class extends Migration
       $table->enum('agama', ['Islam', 'Kristen', 'Katolik', 'Konghucu', 'Budha', 'Hindu']);
       $table->string('nomor_nik_ktp', 16);
       $table->string('nomor_npwp', 20)->default();
+      $table->string('nomor_rekening', 20)->default();
       $table->string('nomor_hp', 15);
       $table->enum('golongan_darah', ['A', 'B', 'O', 'AB', 'A-', 'B-', 'O-', 'AB-']);
       $table->string('ibu_kandung');
