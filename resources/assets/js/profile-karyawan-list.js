@@ -196,10 +196,14 @@ $(function () {
               '" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Preview Invoice">' +
               '<i class="ti ti-eye mx-2 ti-md"></i>' +
               '</a>' +
-              '<div class="dropdown-menu dropdown-menu-end">'+
-              '<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${id}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditUser">Edit Pribadi</button>' +
-              '<button id="btnEditPendidikan" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect">Edit Pendidikan</button>' +
-              '<button id="btnEditKeluarga" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect">Edit Keluarga</button>' +
+              '<div class="dropdown">' +
+              '<a href="javascript:;" class="btn dropdown-toggle hide-arrow btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill p-0" data-bs-toggle="dropdown">' +
+              '<i class="ti ti-dots-vertical ti-md"></i>' +
+              '</a>' +
+              '<div class="dropdown-menu dropdown-menu-end">' +
+                  '<button id="btnEditPribadi" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditUser" class="dropdown-item">Edit Pribadi</button>' +
+                  '<button id="btnEditPendidikan" class="dropdown-item">Edit Pendidikan</button>' +
+                  '<button id="btnEditKeluarga" class="dropdown-item">Edit Keluarga</button>' +
               '</div>' +
               '</div>' +
               '</div>'
