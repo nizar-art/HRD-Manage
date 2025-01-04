@@ -209,6 +209,7 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/form/karyawan/storeKaryawan', [Formkaryawan::class, 'storeKaryawan'])->name('Form-karyawan-storeKaryawan');
   Route::post('/form/karyawan/storeRiwayatPendidikan', [Formkaryawan::class, 'storeRiwayatPendidikan'])->name('Form-karyawan-storeRiwayatPendidikan');
   Route::post('/form/karyawan/storeKeluarga', [Formkaryawan::class, 'storeKeluarga'])->name('Form-karyawan-storeKeluarga');
+  Route::get('/profile/karyawan/editKaryawan/{id}', [Formkaryawan::class, 'editKaryawan'])->name('Hrd-editKaryawan');
 
   //form karyawan
   Route::get('/form/pribadi/karyawan', [FormProfile::class, 'index'])->name('form-pribadi-karyawan');

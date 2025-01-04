@@ -196,16 +196,10 @@ $(function () {
               '" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Preview Invoice">' +
               '<i class="ti ti-eye mx-2 ti-md"></i>' +
               '</a>' +
-              '<div class="dropdown">' +
-              '<a href="javascript:;" class="btn dropdown-toggle hide-arrow btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill p-0" data-bs-toggle="dropdown">' +
-              '<i class="ti ti-dots-vertical ti-md"></i>' +
-              '</a>' +
-              '<div class="dropdown-menu dropdown-menu-end">' +
-              '<a data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditUser" class="dropdown-item">Edit Pribadi</a>' +
-              '<a href="' +
-              baseUrl +
-              'app/invoice/edit" class="dropdown-item">Edit Pendidikan </a>' +
-              '<a href="javascript:;" class="dropdown-item">Edit Keluarga</a>' +
+              '<div class="dropdown-menu dropdown-menu-end">'+
+              '<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${id}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditUser">Edit Pribadi</button>' +
+              '<button id="btnEditPendidikan" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect">Edit Pendidikan</button>' +
+              '<button id="btnEditKeluarga" class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect">Edit Keluarga</button>' +
               '</div>' +
               '</div>' +
               '</div>'
@@ -487,9 +481,8 @@ $(function () {
     $('.dt-buttons').addClass('d-flex flex-wrap mb-6 mb-sm-0');
   }
 
-
   $(document).on('click', '.edit-record', function () {
-    const user_id = $(this).data('id'); // Ambil ID dari tombol
+    const id = $(this).data('id'); // Ambil ID dari tombol
     var dtrModal = $('.dtr-bs-modal.show');
 
     // Sembunyikan modal responsif (jika ada)
@@ -501,47 +494,66 @@ $(function () {
     $('#offcanvasEditUserLabel').html('Edit Data Pribadi');
 
     // Panggil data berdasarkan ID
-    $.get(`/profile-karyawan/${user_id}/edit`, function (data) {
-      // Isi data ke dalam form
-      $('#user_id').val(data.karyawan.user_id);
-      $('#nama_lengkap').val(data.karyawan.nama_lengkap);
-      $('#email').val(data.karyawan.email);
+    // Send GET request to fetch data
+    $.get(`/profile/karyawan/editKaryawan/${id}`, function (response) {
+      if (response.data) {
+        const data = response.data;
 
-      // Isi alamat KTP
-      $('#jalan_ktp').val(data.alamat_ktp.jalan || '');
-      $('#rt_ktp').val(data.alamat_ktp.rt || '');
-      $('#rw_ktp').val(data.alamat_ktp.rw || '');
-      $('#desa_ktp').val(data.alamat_ktp.desa || '');
-      $('#kecamatan_ktp').val(data.alamat_ktp.kecamatan || '');
-      $('#kabupaten_ktp').val(data.alamat_ktp.kabupaten || '');
-      $('#provinsi_ktp')
-        .val(data.alamat_ktp.provinsi || '')
-        .trigger('change');
+        // Populate the form with the data
+        $('#id').val(data.id);
+        $('#nama_lengkap').val(data.nama_lengkap);
+        $('#jenis_kelamin').val(data.jenis_kelamin).trigger('change'); // Assuming dropdown
+        $('#tempat_lahir').val(data.tempat_lahir);
+        $('#tanggal_lahir').val(data.tanggal_lahir);
+        $('#email').val(data.email);
+        $('#agama').val(data.agama).trigger('change'); // Assuming dropdown
+        $('#nomor_nik_ktp').val(data.nomor_nik_ktp);
+        $('#nomor_npwp').val(data.nomor_npwp);
+        $('#nomor_rekening').val(data.nomor_rekening);
+        $('#nomor_hp').val(data.nomor_hp);
+        $('#golongan_darah').val(data.golongan_darah).trigger('change'); // Assuming dropdown
+        $('#ibu_kandung').val(data.ibu_kandung);
+        $('#status_pernikahan').val(data.status_pernikahan).trigger('change'); // Assuming dropdown
 
-      // Isi alamat domisili jika ada
-      if (data.alamat_domisili) {
-        $('#same-address').prop('checked', false);
-        $('#jalan_domisili').val(data.alamat_domisili.jalan || '');
-        $('#rt_domisili').val(data.alamat_domisili.rt || '');
-        $('#rw_domisili').val(data.alamat_domisili.rw || '');
-        $('#desa_domisili').val(data.alamat_domisili.desa || '');
-        $('#kecamatan_domisili').val(data.alamat_domisili.kecamatan || '');
-        $('#kabupaten_domisili').val(data.alamat_domisili.kabupaten || '');
-        $('#provinsi_domisili')
-          .val(data.alamat_domisili.provinsi || '')
-          .trigger('change');
-      } else {
-        // Jika alamat domisili tidak ada, centang "alamat sama"
-        $('#same-address').prop('checked', true);
+        // Populate Alamat KTP
+        if (data.alamat_ktp) {
+          $('#jalan_ktp').val(data.alamat_ktp.jalan || '');
+          $('#rt_ktp').val(data.alamat_ktp.rt || '');
+          $('#rw_ktp').val(data.alamat_ktp.rw || '');
+          $('#desa_ktp').val(data.alamat_ktp.desa || '');
+          $('#kecamatan_ktp').val(data.alamat_ktp.kecamatan || '');
+          $('#kabupaten_ktp').val(data.alamat_ktp.kabupaten || '');
+          $('#provinsi_ktp')
+            .val(data.alamat_ktp.provinsi || '')
+            .trigger('change');
+        }
 
-        // Kosongkan input alamat domisili
-        $('#jalan_domisili').val('');
-        $('#rt_domisili').val('');
-        $('#rw_domisili').val('');
-        $('#desa_domisili').val('');
-        $('#kecamatan_domisili').val('');
-        $('#kabupaten_domisili').val('');
-        $('#provinsi_domisili').val('').trigger('change');
+        // Populate Alamat Domisili
+        if (data.alamat_domisili) {
+          $('#same-address').prop('checked', false); // Uncheck "Alamat Sama"
+          $('#jalan_domisili').val(data.alamat_domisili.jalan || '');
+          $('#rt_domisili').val(data.alamat_domisili.rt || '');
+          $('#rw_domisili').val(data.alamat_domisili.rw || '');
+          $('#desa_domisili').val(data.alamat_domisili.desa || '');
+          $('#kecamatan_domisili').val(data.alamat_domisili.kecamatan || '');
+          $('#kabupaten_domisili').val(data.alamat_domisili.kabupaten || '');
+          $('#provinsi_domisili')
+            .val(data.alamat_domisili.provinsi || '')
+            .trigger('change');
+        } else {
+          // If no domisili address, assume it's the same as KTP
+          $('#same-address').prop('checked', true); // Check "Alamat Sama"
+          $('#jalan_domisili').val('');
+          $('#rt_domisili').val('');
+          $('#rw_domisili').val('');
+          $('#desa_domisili').val('');
+          $('#kecamatan_domisili').val('');
+          $('#kabupaten_domisili').val('');
+          $('#provinsi_domisili').val('').trigger('change');
+        }
+
+        // Open the modal or offcanvas
+        $('#offcanvasEditUser').offcanvas('show'); // Assuming you're using a Bootstrap offcanvas
       }
     }).fail(function () {
       alert('Gagal mengambil data. Silakan coba lagi.');

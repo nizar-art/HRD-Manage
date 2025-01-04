@@ -97,6 +97,19 @@ class Formkaryawan extends Controller
       return response()->json(['message' => 'Data berhasil disimpan', 'data' => $karyawan], 201);
   }
 
+  // Edit data Karyawan
+  public function editKaryawan($id)
+  {
+      $karyawan = Karyawan::find($id);
+
+      if (!$karyawan) {
+          return response()->json(['message' => 'Data tidak ditemukan'], 404);
+      }
+
+      return response()->json(['message' => 'Data ditemukan', 'data' => $karyawan], 200);
+  }
+
+
   // Store data for Riwayat Pendidikan
   public function storeRiwayatPendidikan(Request $request)
   {
