@@ -94,6 +94,10 @@
                               <td>{{ $dataPribadi->nomor_npwp ?? '-' }}</td>
                           </tr>
                           <tr>
+                            <td class="pe-3"><strong>Nomor Rekening:</strong></td>
+                            <td>{{ $dataPribadi->nomor_rekening ?? '-' }}</td>
+                          </tr>
+                          <tr>
                               <td class="pe-3"><strong>Nomor HP:</strong></td>
                               <td>{{ $dataPribadi->nomor_hp }}</td>
                           </tr>
@@ -183,8 +187,12 @@
                       <h6>Data Kepegawaian</h6>
                       <table class="table">
                           <tbody>
+                            <tr>
+                              <td class="pe-1"><strong>Perusahaan:</strong></td>
+                              <td class="fw-medium">{{ $dataKepegawaian->perusahaan}}</td>
+                            </tr>
                               <tr>
-                                  <td class="pe-1"><strong>Nomor Kerja:</strong></td>
+                                  <td class="pe-1"><strong>Nik Karyawan:</strong></td>
                                   <td class="fw-medium">{{ $dataKepegawaian->nomer_kerja }}</td>
                               </tr>
                               <tr>

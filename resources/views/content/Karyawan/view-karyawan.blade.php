@@ -33,7 +33,7 @@
     <div class="d-flex flex-column justify-content-center align-items-center text-center mb-6 row-gap-4">
       <div class="d-flex flex-column justify-content-center">
           <h4 class="mb-1">Detail Profile Anda</h4>
-          <p class="mb-0">Silahkan perbarui informasi dengan klik button Anda di bawah ini</p>
+          <p class="mb-0">Apabila terdapat ketidaksesuaian data, Anda dapat menghubungi admin atau bagian HRD untuk perbaikan.</p>
       </div>
     </div>
     <!-- Detail Karyawan -->
@@ -95,6 +95,10 @@
                             <tr>
                                 <td class="pe-3"><strong>Nomor NPWP:</strong></td>
                                 <td>{{ $dataPribadi->nomor_npwp ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                              <td class="pe-3"><strong>Nomor Rekening:</strong></td>
+                              <td>{{ $dataPribadi->nomor_rekening ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="pe-3"><strong>Nomor HP:</strong></td>
@@ -183,6 +187,10 @@
                       <h6>Data Kepegawaian</h6>
                       <table class="table">
                           <tbody>
+                            <tr>
+                              <td class="pe-1"><strong>Perusahaan:</strong></td>
+                              <td class="fw-medium">{{ $dataKepegawaian->perusahaan}}</td>
+                            </tr>
                               <tr>
                                   <td class="pe-1"><strong>Nomor Kerja:</strong></td>
                                   <td class="fw-medium">{{ $dataKepegawaian->nomer_kerja }}</td>
@@ -193,11 +201,11 @@
                               </tr>
                               <tr>
                                   <td class="pe-3"><strong>Department:</strong></td>
-                                  <td>{{ $dataKepegawaian->id_department->name_department?? '-' }}</td> <!-- If department exists, show its name -->
+                                  <td>{{ $dataKepegawaian->department->name_department?? '-' }}</td> <!-- If department exists, show its name -->
                               </tr>
                               <tr>
                                   <td class="pe-3"><strong>Jabatan:</strong></td>
-                                  <td>{{ $dataKepegawaian->id_jabatan->name_jabatan?? '-' }}</td> <!-- If jabatan exists, show its name -->
+                                  <td>{{ $dataKepegawaian->jabatan->name_jabatan?? '-' }}</td> <!-- If jabatan exists, show its name -->
                               </tr>
                               <tr>
                                   <td class="pe-3"><strong>Lokasi Kerja:</strong></td>

@@ -159,6 +159,7 @@ use App\Http\Controllers\tables\DatatableExtensions;
 use App\Http\Controllers\charts\ApexCharts;
 use App\Http\Controllers\charts\ChartJs;
 use App\Http\Controllers\Karyawan\Formkaryawan;
+use App\Http\Controllers\Karyawan\EditProfileKaryawan;
 use App\Http\Controllers\department\CategoryDepartment;
 use App\Http\Controllers\department\CategoryJabatan;
 use App\Http\Controllers\hrd\DetailKaryawan;
@@ -241,7 +242,7 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/profile/karyawan/storeKaryawan', [ProfileKaryawanAdd::class, 'storeKaryawanHrd'])->name('Hrd-storeKaryawan');
   Route::post('/profile/karyawan/storeRiwayatPendidikan', [ProfileKaryawanAdd::class, 'storeRiwayatPendidikanHrd'])->name('Hrd-storeRiwayatPendidikan');
   Route::post('/profile/karyawan/storeKeluarga', [ProfileKaryawanAdd::class, 'storeKeluargaHrd'])->name('Hrd-storeKeluarga');
-  Route::get('/profile-karyawan/{user_id}/edit', [ProfileKaryawanController::class, 'edit'])->name('profile.karyawan.edit');
+  Route::get('/profile-karyawan/{user_id}/edit', [EditProfileKaryawan::class, 'edit'])->name('profile.karyawan.edit');
   Route::get('/detail/karyawan/{id}', [DetailKaryawan::class, 'index'])->name('detail.karyawan.view');
 
   Route::get('/informasi/kepegawaian', [InformasiKepegawaian::class, 'index'])->name('hrd-informasi-kepegawaian');
