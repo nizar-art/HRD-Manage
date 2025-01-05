@@ -12,13 +12,23 @@ use Illuminate\Support\Facades\Validator;
 
 class InformasiKepegawaian extends Controller
 {
-    public function index()
-    {
-        $karyawan = Karyawan::all();
-        $departments = Department::all();
-        $jabatan = Jabatan::all();
-        return view('content.hrd.informasi-kepegawaian', compact('karyawan', 'departments', 'jabatan'));
-    }
+  public function index()
+  {
+      $karyawan = Karyawan::all();
+      $departments = Department::all();
+      $jabatan = Jabatan::all();
+      $kepegawaian = Kepegawaian::all();
+
+      // Count the total number of karyawan, departments, and jabatan
+      $totalKaryawan = $karyawan->count();
+      $totalDepartments = $departments->count();
+      $totalJabatan = $jabatan->count();
+      $totalKepegawaian = $kepegawaian->count();
+
+      // Pass the counts along with other data to the view
+      return view('content.hrd.informasi-kepegawaian', compact('totalKaryawan', 'totalDepartments', 'totalJabatan','totalKepegawaian', 'karyawan', 'departments', 'jabatan'));
+  }
+
 
     public function store(Request $request)
     {
@@ -45,31 +55,76 @@ class InformasiKepegawaian extends Controller
         return response()->json(['message' => 'Kepegawaian created successfully', 'user' => $kepegawaian], 201);
     }
 
-    public function getAll()
+    public function getAll(Request $request)
     {
-        $kepegawaians = Kepegawaian::with([
+        // Default values for pagination and sorting
+        $limit = $request->input('length') ?: 10;
+        $start = $request->input('start') ?: 0;
+        $columns = [
+            0 => 'id',
+            1 => 'nama_lengkap',
+            2 => 'perusahaan',
+            3 => 'nomer_kerja',
+            4 => 'tanggal_masuk',
+            5 => 'name_jabatan',
+            6 => 'name_department',
+            7 => 'lokasi_kerja'
+        ];
+        $order = $columns[$request->input('order.0.column')] ?? 'id';
+        $dir = $request->input('order.0.dir') ?: 'asc';
+
+        // Base query for Kepegawaian
+        $query = Kepegawaian::with([
             'karyawan:id,nama_lengkap',
             'jabatan:id,name_jabatan',
             'department:id,name_department'
-        ])->get();
+        ]);
 
+        // Apply search filter
+        if (!empty($request->input('search.value'))) {
+            $search = $request->input('search.value');
+            $query->whereHas('karyawan', function ($q) use ($search) {
+                $q->where('nama_lengkap', 'LIKE', "%{$search}%");
+            })->orWhere('perusahaan', 'LIKE', "%{$search}%")
+              ->orWhere('nomer_kerja', 'LIKE', "%{$search}%")
+              ->orWhere('lokasi_kerja', 'LIKE', "%{$search}%");
+        }
+
+        // Get total records (before pagination)
+        $totalData = Kepegawaian::count();
+        $totalFiltered = $query->count();
+
+        // Apply pagination and sorting
+        $kepegawaians = $query
+            ->offset($start)
+            ->limit($limit)
+            ->orderBy($order, $dir)
+            ->get();
+
+        // Format the data for the response
         $formattedData = $kepegawaians->map(function ($kepegawaian) {
             return [
                 'id' => $kepegawaian->id,
                 'nama_lengkap' => $kepegawaian->karyawan ? ucfirst($kepegawaian->karyawan->nama_lengkap) : null,
                 'perusahaan' => $kepegawaian->perusahaan,
                 'nomer_kerja' => $kepegawaian->nomer_kerja,
-                'tanggal_masuk' => $kepegawaian->tanggal_masuk ? $kepegawaian->tanggal_masuk->format('Y-m-d') : null,
-                'name_jabatan' => $kepegawaian->jabatan->name_jabatan ??'-',
-                'name_department' => $kepegawaian->department->name_department ??'-',
+                'tanggal_masuk' => $kepegawaian->tanggal_masuk ? $kepegawaian->tanggal_masuk->format('d-m-Y') : null,
+                'name_jabatan' => $kepegawaian->jabatan->name_jabatan ?? '-',
+                'name_department' => $kepegawaian->department->name_department ?? '-',
                 'lokasi_kerja' => $kepegawaian->lokasi_kerja,
             ];
         });
 
+        // Return JSON response
         return response()->json([
-            'data' => $formattedData
+            'draw' => intval($request->input('draw')), // Optional, used by DataTables
+            'recordsTotal' => $totalData,
+            'recordsFiltered' => $totalFiltered,
+            'data' => $formattedData,
         ]);
     }
+
+
 
     public function edit($id)
     {

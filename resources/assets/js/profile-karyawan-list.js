@@ -66,6 +66,13 @@ $(function () {
       1: { title: 'In Stock' }
     };
 
+  // ajax setup
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
   // E-commerce Products datatable
 
   if (dt_product_table.length) {
@@ -183,16 +190,18 @@ $(function () {
           render: function (data, type, full, meta) {
             const baseUrl = 'http://127.0.0.1:8000/'; // Ganti dengan base URL aplikasi Anda
             const id = full.id; // Pastikan 'id' adalah nama kolom di data Anda yang berisi ID karyawan
+            const editPribadi = full['id'];
+            const Delete = full['id'];
 
             return (
               '<div class="d-flex align-items-center">' +
-              '<a href="javascript:;" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Delete">' +
+              `<a href="javascript:;" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record" data-id="${Delete}" data-bs-placement="top" title="Delete">` +
               '<i class="ti ti-trash mx-2 ti-md"></i>' +
               '</a>' +
               '<a href="' +
               baseUrl +
               'detail/karyawan/' +
-              id + // Ganti {id} dengan nilai ID dari data baris
+              id +
               '" data-bs-toggle="tooltip" class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill" data-bs-placement="top" title="Preview Invoice">' +
               '<i class="ti ti-eye mx-2 ti-md"></i>' +
               '</a>' +
@@ -201,9 +210,9 @@ $(function () {
               '<i class="ti ti-dots-vertical ti-md"></i>' +
               '</a>' +
               '<div class="dropdown-menu dropdown-menu-end">' +
-                  '<button id="btnEditPribadi" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditUser" class="dropdown-item">Edit Pribadi</button>' +
-                  '<button id="btnEditPendidikan" class="dropdown-item">Edit Pendidikan</button>' +
-                  '<button id="btnEditKeluarga" class="dropdown-item">Edit Keluarga</button>' +
+              `<button id="btnEditPribadi" class="dropdown-item edit-pribadi" data-id="${editPribadi}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditUser">Edit Pribadi</button>` +
+              '<a id="btnEditPendidikan" class="dropdown-item" href="/pages/misc-under-maintenance">Edit Pendidikan</a>' +
+              '<a id="btnEditKeluarga" class="dropdown-item" href="/pages/misc-under-maintenance">Edit Keluarga</a>' +
               '</div>' +
               '</div>' +
               '</div>'
@@ -276,29 +285,6 @@ $(function () {
               }
             },
             {
-              extend: 'csv',
-              text: '<i class="ti ti-file me-2" ></i>Csv',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5, 6, 7],
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('product-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
               extend: 'excel',
               text: '<i class="ti ti-file-export me-2"></i>Excel',
               className: 'dropdown-item',
@@ -344,40 +330,20 @@ $(function () {
                 }
               }
             },
-            {
-              extend: 'copy',
-              text: '<i class="ti ti-copy me-2"></i>Copy',
-              className: 'dropdown-item',
-              action: function (e, dt, node, config) {
-                // Link to copy
-                var linkToCopy = 'http://127.0.0.1:8000/auth/login-basic';
-
-                // Create a temporary input element to copy the link
-                var tempInput = document.createElement('input');
-                tempInput.value = linkToCopy;
-                document.body.appendChild(tempInput);
-
-                // Select and copy the text
-                tempInput.select();
-                tempInput.setSelectionRange(0, 99999); // For mobile devices
-                document.execCommand('copy');
-
-                // Remove the temporary input element
-                document.body.removeChild(tempInput);
-
-                // Optional: Provide feedback to the user
-                alert('Link copied: ' + linkToCopy);
-              }
-            }
           ]
         },
         {
-          text: '<i class="ti ti-plus me-0 me-scopm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Add Karyawan</span>',
-          className: 'add-new btn btn-primary ms-2 ms-sm-0 waves-effect waves-light',
+          text: '<i class="ti ti-copy me-0 me-scopm-1 ti-xs"></i><span class="d-none d-sm-inline-block">Copy Link</span>',
+          className: 'copy-link btn btn-primary ms-2 ms-sm-0 waves-effect waves-light',
           action: function () {
-            window.location.href = ProfileKaryawanAdd;
+            navigator.clipboard.writeText('http://127.0.0.1:8000/auth/login-basic').then(function () {
+              alert('Link copied to clipboard!');
+            }, function () {
+              alert('Failed to copy the link.');
+            });
           }
         }
+
       ],
       // For responsive popup
       responsive: {
@@ -484,10 +450,168 @@ $(function () {
     $('.dataTables_length').addClass('mx-n2');
     $('.dt-buttons').addClass('d-flex flex-wrap mb-6 mb-sm-0');
   }
+  const select2 = $('.select2');
 
-  $(document).on('click', '.edit-record', function () {
-    const id = $(this).data('id'); // Ambil ID dari tombol
-    var dtrModal = $('.dtr-bs-modal.show');
+  // Initialize Select2 for all select elements with class select2
+  if (select2.length) {
+    select2.each(function () {
+      var $this = $(this);
+      $this.select2({
+        placeholder: 'Pilih Opsi',
+        dropdownParent: $this.parent()
+      });
+    });
+  }
+
+  // Copy address from KTP to Domisili when checkbox is checked
+  $('#same-address').on('change', function () {
+    if ($(this).is(':checked')) {
+      $('#jalan_domisili').val($('#jalan_ktp').val());
+      $('#rt_domisili').val($('#rt_ktp').val());
+      $('#rw_domisili').val($('#rw_ktp').val());
+      $('#provinsi_domisili').val($('#provinsi_ktp').val()).trigger('change');
+
+      $('#provinsi_domisili').on('change', function () {
+        let kabupatenKtp = $('#kabupaten_ktp').val();
+        $('#kabupaten_domisili').html('<option>Loading...</option>');
+
+        $.ajax({
+          url: '/get-kabupaten',
+          type: 'GET',
+          data: { provinsi_id: $('#provinsi_domisili').val() },
+          success: function (response) {
+            $('#kabupaten_domisili').empty().append('<option>Pilih Kabupaten</option>');
+            response.forEach(function (kabupaten) {
+              $('#kabupaten_domisili').append(
+                '<option value="' +
+                  kabupaten.id +
+                  '" ' +
+                  (kabupaten.id == kabupatenKtp ? 'selected' : '') +
+                  '>' +
+                  kabupaten.name +
+                  '</option>'
+              );
+            });
+            $('#kabupaten_domisili').trigger('change');
+          }
+        });
+      });
+
+      $('#kabupaten_domisili').on('change', function () {
+        let kecamatanKtp = $('#kecamatan_ktp').val();
+        $('#kecamatan_domisili').html('<option>Loading...</option>');
+
+        $.ajax({
+          url: '/get-kecamatan',
+          type: 'GET',
+          data: { kabupaten_id: $(this).val() },
+          success: function (response) {
+            $('#kecamatan_domisili').empty().append('<option>Pilih Kecamatan</option>');
+            response.forEach(function (kecamatan) {
+              $('#kecamatan_domisili').append(
+                '<option value="' +
+                  kecamatan.id +
+                  '" ' +
+                  (kecamatan.id == kecamatanKtp ? 'selected' : '') +
+                  '>' +
+                  kecamatan.name +
+                  '</option>'
+              );
+            });
+            $('#kecamatan_domisili').trigger('change');
+          }
+        });
+      });
+
+      $('#kecamatan_domisili').on('change', function () {
+        let desaKtp = $('#desa_ktp').val();
+        $('#desa_domisili').html('<option>Loading...</option>');
+
+        $.ajax({
+          url: '/get-desa',
+          type: 'GET',
+          data: { kecamatan_id: $(this).val() },
+          success: function (response) {
+            $('#desa_domisili').empty().append('<option>Pilih Desa</option>');
+            response.forEach(function (desa) {
+              $('#desa_domisili').append(
+                '<option value="' +
+                  desa.id +
+                  '" ' +
+                  (desa.id == desaKtp ? 'selected' : '') +
+                  '>' +
+                  desa.name +
+                  '</option>'
+              );
+            });
+          }
+        });
+      });
+    } else {
+      // Reset address fields when checkbox is unchecked
+      $('#jalan_domisili, #rt_domisili, #rw_domisili').val('');
+      $('#provinsi_domisili, #kabupaten_domisili, #kecamatan_domisili, #desa_domisili').val('').trigger('change');
+    }
+  });
+
+  // Dynamic Kabupaten Filter
+  $('#provinsi_ktp').on('change', function () {
+    let provinsiId = $(this).val();
+    $('#kabupaten_ktp').html('<option>Loading...</option>');
+
+    $.ajax({
+      url: '/get-kabupaten',
+      type: 'GET',
+      data: { provinsi_id: provinsiId },
+      success: function (response) {
+        $('#kabupaten_ktp').empty().append('<option>Pilih Kabupaten</option>');
+        response.forEach(function (kabupaten) {
+          $('#kabupaten_ktp').append('<option value="' + kabupaten.id + '">' + kabupaten.name + '</option>');
+        });
+      }
+    });
+  });
+  // Filter Kecamatan berdasarkan Kabupaten
+  $('#kabupaten_ktp').on('change', function () {
+    let kabupatenId = $(this).val();
+    $('#kecamatan_ktp').html('<option selected disabled>Loading...</option>');
+
+    $.ajax({
+      url: '/get-kecamatan',
+      type: 'GET',
+      data: { kabupaten_id: kabupatenId },
+      success: function (response) {
+        $('#kecamatan_ktp').empty();
+        $('#kecamatan_ktp').append('<option selected disabled>Pilih Kecamatan</option>');
+        response.forEach(function (kecamatan) {
+          $('#kecamatan_ktp').append(`<option value="${kecamatan.id}">${kecamatan.name}</option>`);
+        });
+      }
+    });
+  });
+
+  // Filter Desa berdasarkan Kecamatan
+  $('#kecamatan_ktp').on('change', function () {
+    let kecamatanId = $(this).val();
+    $('#desa_ktp').html('<option selected disabled>Loading...</option>');
+
+    $.ajax({
+      url: '/get-desa',
+      type: 'GET',
+      data: { kecamatan_id: kecamatanId },
+      success: function (response) {
+        $('#desa_ktp').empty();
+        $('#desa_ktp').append('<option selected disabled>Pilih Desa</option>');
+        response.forEach(function (desa) {
+          $('#desa_ktp').append(`<option value="${desa.id}">${desa.name}</option>`);
+        });
+      }
+    });
+  });
+
+  $('.datatables-products').on('click', '.edit-pribadi', function (e) {
+    const id = $(this).data('id'); // Ambil ID dari atribut data-id tombol
+    const dtrModal = $('.dtr-bs-modal.show');
 
     // Sembunyikan modal responsif (jika ada)
     if (dtrModal.length) {
@@ -498,51 +622,52 @@ $(function () {
     $('#offcanvasEditUserLabel').html('Edit Data Pribadi');
 
     // Panggil data berdasarkan ID
-    // Send GET request to fetch data
     $.get(`/profile/karyawan/editKaryawan/${id}`, function (response) {
-      if (response.data) {
-        const data = response.data;
+      if (response) {
+        const karyawan = response.karyawan;
+        const alamatKtp = response.alamat_ktp;
+        const alamatDomisili = response.alamat_domisili;
 
-        // Populate the form with the data
-        $('#id').val(data.id);
-        $('#nama_lengkap').val(data.nama_lengkap);
-        $('#jenis_kelamin').val(data.jenis_kelamin).trigger('change'); // Assuming dropdown
-        $('#tempat_lahir').val(data.tempat_lahir);
-        $('#tanggal_lahir').val(data.tanggal_lahir);
-        $('#email').val(data.email);
-        $('#agama').val(data.agama).trigger('change'); // Assuming dropdown
-        $('#nomor_nik_ktp').val(data.nomor_nik_ktp);
-        $('#nomor_npwp').val(data.nomor_npwp);
-        $('#nomor_rekening').val(data.nomor_rekening);
-        $('#nomor_hp').val(data.nomor_hp);
-        $('#golongan_darah').val(data.golongan_darah).trigger('change'); // Assuming dropdown
-        $('#ibu_kandung').val(data.ibu_kandung);
-        $('#status_pernikahan').val(data.status_pernikahan).trigger('change'); // Assuming dropdown
+        // Populate the form with the karyawan data
+        $('#id').val(karyawan.id);
+        $('#nama_lengkap').val(karyawan.nama_lengkap);
+        $('#jenis_kelamin').val(karyawan.jenis_kelamin).trigger('change'); // Dropdown
+        $('#tempat_lahir').val(karyawan.tempat_lahir);
+        $('#tanggal_lahir').val(karyawan.tanggal_lahir);
+        $('#email').val(karyawan.email);
+        $('#agama').val(karyawan.agama).trigger('change'); // Dropdown
+        $('#nomor_nik_ktp').val(karyawan.nomor_nik_ktp);
+        $('#nomor_npwp').val(karyawan.nomor_npwp);
+        $('#nomor_rekening').val(karyawan.nomor_rekening);
+        $('#nomor_hp').val(karyawan.nomor_hp);
+        $('#golongan_darah').val(karyawan.golongan_darah).trigger('change'); // Dropdown
+        $('#ibu_kandung').val(karyawan.ibu_kandung);
+        $('#status_pernikahan').val(karyawan.status_pernikahan).trigger('change'); // Dropdown
 
         // Populate Alamat KTP
-        if (data.alamat_ktp) {
-          $('#jalan_ktp').val(data.alamat_ktp.jalan || '');
-          $('#rt_ktp').val(data.alamat_ktp.rt || '');
-          $('#rw_ktp').val(data.alamat_ktp.rw || '');
-          $('#desa_ktp').val(data.alamat_ktp.desa || '');
-          $('#kecamatan_ktp').val(data.alamat_ktp.kecamatan || '');
-          $('#kabupaten_ktp').val(data.alamat_ktp.kabupaten || '');
+        if (alamatKtp) {
+          $('#jalan_ktp').val(alamatKtp.jalan || '');
+          $('#rt_ktp').val(alamatKtp.rt || '');
+          $('#rw_ktp').val(alamatKtp.rw || '');
+          $('#desa_ktp').val(alamatKtp.desa || '');
+          $('#kecamatan_ktp').val(alamatKtp.kecamatan || '');
+          $('#kabupaten_ktp').val(alamatKtp.kabupaten || '');
           $('#provinsi_ktp')
-            .val(data.alamat_ktp.provinsi || '')
+            .val(alamatKtp.provinsi || '')
             .trigger('change');
         }
 
         // Populate Alamat Domisili
-        if (data.alamat_domisili) {
+        if (alamatDomisili) {
           $('#same-address').prop('checked', false); // Uncheck "Alamat Sama"
-          $('#jalan_domisili').val(data.alamat_domisili.jalan || '');
-          $('#rt_domisili').val(data.alamat_domisili.rt || '');
-          $('#rw_domisili').val(data.alamat_domisili.rw || '');
-          $('#desa_domisili').val(data.alamat_domisili.desa || '');
-          $('#kecamatan_domisili').val(data.alamat_domisili.kecamatan || '');
-          $('#kabupaten_domisili').val(data.alamat_domisili.kabupaten || '');
+          $('#jalan_domisili').val(alamatDomisili.jalan || '');
+          $('#rt_domisili').val(alamatDomisili.rt || '');
+          $('#rw_domisili').val(alamatDomisili.rw || '');
+          $('#desa_domisili').val(alamatDomisili.desa || '');
+          $('#kecamatan_domisili').val(alamatDomisili.kecamatan || '');
+          $('#kabupaten_domisili').val(alamatDomisili.kabupaten || '');
           $('#provinsi_domisili')
-            .val(data.alamat_domisili.provinsi || '')
+            .val(alamatDomisili.provinsi || '')
             .trigger('change');
         } else {
           // If no domisili address, assume it's the same as KTP
@@ -556,17 +681,271 @@ $(function () {
           $('#provinsi_domisili').val('').trigger('change');
         }
 
-        // Open the modal or offcanvas
-        $('#offcanvasEditUser').offcanvas('show'); // Assuming you're using a Bootstrap offcanvas
+        // Open the offcanvas
+        $('#offcanvasEditUser').offcanvas('show');
       }
-    }).fail(function () {
-      alert('Gagal mengambil data. Silakan coba lagi.');
+    }).fail(function (jqXHR) {
+      if (jqXHR.status === 404) {
+        alert('Data karyawan tidak ditemukan.');
+      } else {
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+      }
+    });
+  });
+
+  // Checkbox "Sama dengan Alamat KTP"
+  $('#same-address').on('change', function () {
+    if ($(this).is(':checked')) {
+      $('#jalan_domisili').val($('#jalan_ktp').val());
+      $('#rt_domisili').val($('#rt_ktp').val());
+      $('#rw_domisili').val($('#rw_ktp').val());
+      $('#desa_domisili').val($('#desa_ktp').val());
+      $('#kecamatan_domisili').val($('#kecamatan_ktp').val());
+      $('#kabupaten_domisili').val($('#kabupaten_ktp').val());
+      $('#provinsi_domisili').val($('#provinsi_ktp').val()).trigger('change');
+    } else {
+      // Reset domisili fields
+      $('#jalan_domisili').val('');
+      $('#rt_domisili').val('');
+      $('#rw_domisili').val('');
+      $('#desa_domisili').val('');
+      $('#kecamatan_domisili').val('');
+      $('#kabupaten_domisili').val('');
+      $('#provinsi_domisili').val('').trigger('change');
+    }
+  });
+
+  // User form validation and submission
+  $('#form-data-pribadi').submit(function (e) {
+    e.preventDefault();
+
+    // Validasi ID
+    const id = $('#id').val();
+    if (!id) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'ID tidak ditemukan.',
+        icon: 'error'
+      });
+      return;
+    }
+
+    // Ambil nilai dari input fields menggunakan jQuery
+    const namaLengkap = $('#nama_lengkap').val();
+    const jenisKelamin = $('#jenis_kelamin').val();
+    const tempatLahir = $('#tempat_lahir').val();
+    const tanggalLahir = $('#tanggal_lahir').val();
+    const email = $('#email').val();
+    const agama = $('#agama').val();
+    const nomorNikKtp = $('#nomor_nik_ktp').val();
+    const nomorNpwp = $('#nomor_npwp').val() || '-';
+    const nomorRek = $('#nomor_rekening').val() || '-';
+    const nomorHp = $('#nomor_hp').val();
+    const ibuKandung = $('#ibu_kandung').val();
+    const golonganDarah = $('#golongan_darah').val();
+    const statusPernikahan = $('#status_pernikahan').val();
+
+    // Alamat KTP
+    const jalanKtp = $('#jalan_ktp').val();
+    const rtKtp = $('#rt_ktp').val();
+    const rwKtp = $('#rw_ktp').val();
+    const provinsiKtp = $('#provinsi_ktp').find(':selected').text(); // Ambil nama provinsi, bukan ID
+    const kabupatenKtp = $('#kabupaten_ktp').find(':selected').text(); // Ambil nama kabupaten
+    const kecamatanKtp = $('#kecamatan_ktp').find(':selected').text(); // Ambil nama kecamatan
+    const desaKtp = $('#desa_ktp').find(':selected').text();
+
+    // Alamat Domisili
+    const jalanDomisili = $('#jalan_domisili').val();
+    const rtDomisili = $('#rt_domisili').val();
+    const rwDomisili = $('#rw_domisili').val();
+    const provinsiDomisili = $('#provinsi_domisili').find(':selected').text();
+    const kabupatenDomisili = $('#kabupaten_domisili').find(':selected').text();
+    const kecamatanDomisili = $('#kecamatan_domisili').find(':selected').text();
+    const desaDomisili = $('#desa_domisili').find(':selected').text();
+
+    const isSameAddress = $('#same-address').prop('checked');
+
+    // Validasi
+    if (
+      !namaLengkap ||
+      !jenisKelamin ||
+      !tempatLahir ||
+      !tanggalLahir ||
+      !email ||
+      !agama ||
+      !nomorNikKtp ||
+      !nomorHp ||
+      !ibuKandung ||
+      !statusPernikahan ||
+      !jalanKtp ||
+      !rtKtp ||
+      !rwKtp ||
+      !provinsiKtp ||
+      !kabupatenKtp ||
+      !kecamatanKtp ||
+      !desaKtp
+    ) {
+      Swal.fire('Warning', 'Please fill in all required fields.', 'warning');
+      return;
+    }
+
+    if (rtKtp.length > 3 || rwKtp.length > 3) {
+      Swal.fire('Warning', 'RT/RW in KTP must not be greater than 3 characters.', 'warning');
+      return;
+    }
+
+    if (!isSameAddress && (rtDomisili.length > 3 || rwDomisili.length > 3)) {
+      Swal.fire('Warning', 'RT/RW in domisili must not be greater than 3 characters.', 'warning');
+      return;
+    }
+
+    if (
+      !isSameAddress &&
+      (!jalanDomisili ||
+        !rtDomisili ||
+        !rwDomisili ||
+        !provinsiDomisili ||
+        !kabupatenDomisili ||
+        !kecamatanDomisili ||
+        !desaDomisili)
+    ) {
+      Swal.fire('Warning', 'Please complete your domisili address.', 'warning');
+      return;
+    }
+
+    // Siapkan data untuk dikirim dalam format JSON
+    const formData = {
+      id: id,
+      nama_lengkap: namaLengkap,
+      jenis_kelamin: jenisKelamin,
+      tempat_lahir: tempatLahir,
+      tanggal_lahir: tanggalLahir,
+      email: email,
+      agama: agama,
+      nomor_nik_ktp: nomorNikKtp,
+      nomor_npwp: nomorNpwp,
+      nomor_rekening: nomorRek,
+      nomor_hp: nomorHp,
+      ibu_kandung: ibuKandung,
+      golongan_darah: golonganDarah,
+      status_pernikahan: statusPernikahan,
+      alamat_ktp: {
+        jalan: jalanKtp,
+        rt: rtKtp,
+        rw: rwKtp,
+        provinsi: provinsiKtp,
+        kabupaten: kabupatenKtp,
+        kecamatan: kecamatanKtp,
+        desa: desaKtp
+      }
+    };
+
+    if (!isSameAddress) {
+      formData.alamat_domisili = {
+        jalan: jalanDomisili,
+        rt: rtDomisili,
+        rw: rwDomisili,
+        provinsi: provinsiDomisili,
+        kabupaten: kabupatenDomisili,
+        kecamatan: kecamatanDomisili,
+        desa: desaDomisili
+      };
+    }
+
+    // Kirim data dengan AJAX
+    $.ajax({
+      url: `/profile/karyawan/updateKaryawan/${id}`,
+      method: 'PUT',
+      data: formData,
+      success: function (response) {
+        // Sukses
+        dt_products.draw();
+        $('#offcanvasEditUser').offcanvas('hide');
+        Swal.fire({
+          icon: 'success',
+          title: 'Successfully Updated!',
+          text: response.message || 'Data berhasil diperbarui.',
+          customClass: {
+            confirmButton: 'btn btn-success'
+          }
+        }).then(function() {
+          // Reload halaman setelah dialog ditutup
+          window.location.reload();
+        });
+      },
+      error: function () {
+        // Gagal
+        $('#offcanvasEditUser').offcanvas('hide');
+        Swal.fire({
+          title: 'Gagal Memperbarui Data!',
+          text: 'Silakan coba lagi',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'btn btn-danger'
+          }
+        });
+      }
     });
   });
 
   // Delete Record
-  $('.datatables-products tbody').on('click', '.delete-record', function () {
-    dt_products.row($(this).parents('tr')).remove().draw();
+  $(document).on('click', '.delete-record', function () {
+    var id = $(this).data('id'),
+      dtrModal = $('.dtr-bs-modal.show');
+
+    // Show confirmation dialog
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+      customClass: {
+        confirmButton: 'btn btn-danger',
+        cancelButton: 'btn btn-secondary'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/profile/karyawan/${id}`, // Properly formatted DELETE endpoint
+          method: 'DELETE', // HTTP DELETE method
+          dataType: 'json',
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token for security
+          },
+          success: function (response) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Successfully Deleted!',
+              text: response.message || 'Department has been deleted.',
+              customClass: {
+                confirmButton: 'btn btn-success'
+              }
+            }).then(() => {
+              // Refresh halaman setelah SweetAlert selesai
+              location.reload();
+            });
+
+            // Refresh DataTable or the related list
+            if (typeof dt_category !== 'undefined') {
+              dt_category.draw(); // Redraw the table to reflect changes
+            }
+          },
+          error: function (xhr) {
+            console.log('Error:', xhr.responseJSON); // Log error for debugging
+            Swal.fire({
+              icon: 'error',
+              title: 'Error Occurred!',
+              text: xhr.responseJSON?.message || 'An error occurred while processing your request.',
+              customClass: {
+                confirmButton: 'btn btn-danger'
+              }
+            });
+          }
+        });
+      }
+    });
   });
 
   // Filter form control to default size

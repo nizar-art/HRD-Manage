@@ -12,7 +12,6 @@ $(function () {
     userView = baseUrl + 'app/user/view/account',
     offCanvasForm = $('#offcanvasAddUser');
 
-
   if (select2.length) {
     var $this = select2;
     $this.wrap('<div class="position-relative"></div>').select2({
@@ -51,125 +50,125 @@ $(function () {
       ],
       columnDefs: [
         {
-            // For Responsive
-            className: 'control',
-            searchable: false,
-            orderable: false,
-            responsivePriority: 2,
-            targets: 0,
-            render: function (data, type, full, meta) {
-                return ''; // Control column (Empty for now)
-            }
+          // For Responsive
+          className: 'control',
+          searchable: false,
+          orderable: false,
+          responsivePriority: 2,
+          targets: 0,
+          render: function (data, type, full, meta) {
+            return ''; // Control column (Empty for now)
+          }
         },
         {
-            // For Checkboxes
-            targets: 1,
-            orderable: false,
-            checkboxes: {
-                selectAllRender: '<input type="checkbox" class="form-check-input">'
-            },
-            render: function () {
-                return '<input type="checkbox" class="dt-checkboxes form-check-input">';
-            },
-            searchable: false
+          // For Checkboxes
+          targets: 1,
+          orderable: false,
+          checkboxes: {
+            selectAllRender: '<input type="checkbox" class="form-check-input">'
+          },
+          render: function () {
+            return '<input type="checkbox" class="dt-checkboxes form-check-input">';
+          },
+          searchable: false
         },
         {
           // Nama Lengkap
           targets: 2,
           render: function (data, type, full, meta) {
-              var namaLengkap = full['nama_lengkap'];
-              return '<span class="text-heading text-wrap fw-medium">' + namaLengkap + '</span>';
+            var namaLengkap = full['nama_lengkap'];
+            return '<span class="text-heading text-wrap fw-medium">' + namaLengkap + '</span>';
           }
-      },
-      {
-        // perusahaan
-        targets: 3,
-        render: function (data, type, full, meta) {
-          var jenisKelamin = full['perusahaan'];
-          var badgeClass;
-          switch (jenisKelamin) {
-            case 'LKI':
-              badgeClass = 'bg-label-primary';
-              break;
-            case 'Green Cold':
-              badgeClass = 'bg-label-success';
-              break;
+        },
+        {
+          // perusahaan
+          targets: 3,
+          render: function (data, type, full, meta) {
+            var jenisKelamin = full['perusahaan'];
+            var badgeClass;
+            switch (jenisKelamin) {
+              case 'LKI':
+                badgeClass = 'bg-label-primary';
+                break;
+              case 'Green Cold':
+                badgeClass = 'bg-label-success';
+                break;
+            }
+            return (
+              '<div class="d-flex justify-content-center align-items-center">' +
+              '<span class="badge ' +
+              badgeClass +
+              ' text-capitalize">' +
+              jenisKelamin +
+              '</span>' +
+              '</div>'
+            );
           }
-          return (
-            '<div class="d-flex justify-content-center align-items-center">' +
-            '<span class="badge ' +
-            badgeClass +
-            ' text-capitalize">' +
-            jenisKelamin +
-            '</span>' +
-            '</div>'
-          );
-        }
-      },
-      {
+        },
+        {
           // Jenis Kelamin
           targets: 4,
           render: function (data, type, full, meta) {
             var nomerKerja = full['nomer_kerja'];
             return '<span class="text-heading text-wrap fw-medium">' + nomerKerja + '</span>';
           }
-      },
-      {
+        },
+        {
           // Tempat Lahir
           targets: 5,
           render: function (data, type, full, meta) {
             var tanggalMasuk = full['tanggal_masuk'];
             return '<span class="text-heading text-wrap fw-medium">' + tanggalMasuk + '</span>';
           }
-      },
-      {
+        },
+        {
           // Tanggal Lahir
           targets: 6,
           render: function (data, type, full, meta) {
-              var jabatan = full['name_jabatan'];
-              return '<span class="text-heading text-wrap fw-medium">' + jabatan + '</span>';
+            var jabatan = full['name_jabatan'];
+            return '<span class="text-heading text-wrap fw-medium">' + jabatan + '</span>';
           }
-      },
-      {
+        },
+        {
           // Alamat Email
           targets: 7,
           render: function (data, type, full, meta) {
-              var departemen = full['name_department'];
-              return '<span class="text-heading text-wrap fw-medium">' + departemen + '</span>';
+            var departemen = full['name_department'];
+            return '<span class="text-heading text-wrap fw-medium">' + departemen + '</span>';
           }
-      },
-      {
-        // Alamat Email
-        targets: 8,
-        render: function (data, type, full, meta) {
+        },
+        {
+          // Alamat Email
+          targets: 8,
+          render: function (data, type, full, meta) {
             var lokasiKerja = full['lokasi_kerja'];
             return '<span class="text-heading text-wrap fw-medium">' + lokasiKerja + '</span>';
-        }
-    },
-        {
-           // Actions
-          targets: -1,
-            title: 'Actions',
-            searchable: false,
-            orderable: false,
-            render: function (data, type, full, meta) {
-              const editId = full['id'];
-              const deleteId = full['id'];
-              return (
-                '<div class="d-flex align-items-center gap-50">' +
-                `<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${editId}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="ti ti-edit"></i></button>` +
-                `<button class="btn btn-sm btn-icon delete-record btn-text-secondary rounded-pill waves-effect" data-id="${deleteId}"><i class="ti ti-trash"></i></button>` +
-                '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>' +
-                '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                '<a href="' +
-                userView +
-                '" class="dropdown-item">View</a>' +
-                '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
-                '</div>' +
-                '</div>'
-              );
-            }
           }
+        },
+        {
+          // Actions
+          targets: -1,
+          title: 'Actions',
+          searchable: false,
+          orderable: false,
+          render: function (data, type, full, meta) {
+            const editId = full['id'];
+            const deleteId = full['id'];
+            return (
+              '<div class="d-flex align-items-center gap-50">' +
+              `<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${editId}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="ti ti-edit"></i></button>` +
+              `<button class="btn btn-sm btn-icon delete-record btn-text-secondary rounded-pill waves-effect" data-id="${deleteId}"><i class="ti ti-trash"></i></button>` +
+              '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>' +
+              '<div class="dropdown-menu dropdown-menu-end m-0">' +
+              '<a href="' +
+              userView +
+              '" class="dropdown-item">View</a>' +
+              '<a href="javascript:;" class="dropdown-item">Suspend</a>' +
+              '</div>' +
+              '</div>'
+            );
+          }
+        }
       ],
       order: [2, 'asc'], //set any columns order asc/desc
       dom:
@@ -201,22 +200,8 @@ $(function () {
           buttons: [
             {
               extend: 'print',
-              title: 'Informasi Kepegawaian',
+              title: '<div style="text-align: center;">Informasi Kepegawaian</div>',
               text: '<i class="ti ti-printer me-2" ></i>Print',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5, 6, 7], // Sesuai dengan kolom yang tersedia
-                format: {
-                  body: function (inner, colIndex) {
-                    return $(inner).text();
-                  }
-                }
-              }
-            },
-            {
-              extend: 'csv',
-              title: 'Informasi Kepegawaian',
-              text: '<i class="ti ti-file-text me-2" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
                 columns: [1, 2, 3, 4, 5, 6, 7], // Sesuai dengan kolom yang tersedia
@@ -376,8 +361,6 @@ $(function () {
     });
   });
 
-
-
   // edit record
   $(document).on('click', '.edit-record', function () {
     var id = $(this).data('id'),
@@ -391,24 +374,24 @@ $(function () {
     // changing the title of offcanvas
     $('#offcanvasAddUserLabel').html('Edit Kepegawaian');
 
-   // Send GET request to fetch data
+    // Send GET request to fetch data
     $.get(`/edit/kepegawaian/${id}`, function (response) {
-        if (response.data) {
-            const data = response.data;
+      if (response.data) {
+        const data = response.data;
 
-            // Populate the form with the data
-            $('#id').val(data.id);
-            $('#id_karyawan').val(data.id_karyawan); // Assuming dropdown or input
-            $('#perusahaan').val(data.perusahaan);
-            $('#nomer_kerja').val(data.nomer_kerja);
-            $('#tanggal_masuk').val(data.tanggal_masuk);
-            $('#id_department').val(data.id_department); // Assuming dropdown or input
-            $('#id_jabatan').val(data.id_jabatan); // Assuming dropdown or input
-            $('#lokasi_kerja').val(data.lokasi_kerja);
+        // Populate the form with the data
+        $('#id').val(data.id);
+        $('#id_karyawan').val(data.id_karyawan); // Assuming dropdown or input
+        $('#perusahaan').val(data.perusahaan);
+        $('#nomer_kerja').val(data.nomer_kerja);
+        $('#tanggal_masuk').val(data.tanggal_masuk);
+        $('#id_department').val(data.id_department); // Assuming dropdown or input
+        $('#id_jabatan').val(data.id_jabatan); // Assuming dropdown or input
+        $('#lokasi_kerja').val(data.lokasi_kerja);
 
-            // Open the modal or show the edit form
-            $('#editModal').modal('show'); // Assuming you're using a Bootstrap modal
-        }
+        // Open the modal or show the edit form
+        $('#editModal').modal('show'); // Assuming you're using a Bootstrap modal
+      }
     });
   });
 
@@ -515,7 +498,11 @@ $(function () {
         Swal.fire({
           icon: 'success',
           title: kepegawaianId ? 'Successfully Updated!' : 'Successfully Added!',
-          text: response.message || (kepegawaianId ? 'Informasi Kepegawaian has been updated successfully.' : 'New informasi kepegawaian has been added successfully.'),
+          text:
+            response.message ||
+            (kepegawaianId
+              ? 'Informasi Kepegawaian has been updated successfully.'
+              : 'New informasi kepegawaian has been added successfully.'),
           customClass: {
             confirmButton: 'btn btn-success'
           }
@@ -533,8 +520,7 @@ $(function () {
         });
       }
     });
-});
-
+  });
 
   // clearing form data when offcanvas hidden
   offCanvasForm.on('hidden.bs.offcanvas', function () {

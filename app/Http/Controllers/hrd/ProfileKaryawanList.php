@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\hrd;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Karyawan;
+use App\Models\Kepegawaian;
+use App\Models\KontrakKerja;
 use App\Models\Provinces;
 use App\Models\Regencies;
 use App\Models\Districts;
@@ -15,9 +18,17 @@ class ProfileKaryawanList extends Controller
   public function index()
   {
     $provinsis = Provinces::all();
+    $totalUsers = User::count();
+    $totalKaryawan = Karyawan::count();
+    $totalKepegawaian = Kepegawaian::count();
+    $totalKontrakKerja = KontrakKerja::count();
 
     return view('content.hrd.profile-karyawan-list',[
       'provinsis' => $provinsis,
+      'totalUsers' => $totalUsers,
+      'totalKaryawan' => $totalKaryawan,
+      'totalKepegawaian' => $totalKepegawaian,
+      'totalKontrakKerja' => $totalKontrakKerja,
   ]);
   }
   public function getProfileKaryawan()
@@ -30,7 +41,7 @@ class ProfileKaryawanList extends Controller
             'nama_lengkap' => ucfirst($karyawan->nama_lengkap),
             'jenis_kelamin' => $karyawan->jenis_kelamin,
             'tempat_lahir' => ucfirst($karyawan->tempat_lahir),
-            'tanggal_lahir' => $karyawan->tanggal_lahir ? $karyawan->tanggal_lahir->format('Y-m-d') : null,
+            'tanggal_lahir' => $karyawan->tanggal_lahir ? $karyawan->tanggal_lahir->format('d-m-Y') : null,
             'email' => $karyawan->email,
             'nomor_hp' => $karyawan->nomor_hp
         ];
@@ -41,35 +52,28 @@ class ProfileKaryawanList extends Controller
     ]);
   }
 
-  public function edit($userId)
+  public function delete($id)
   {
-      $karyawan = Karyawan::where('user_id', $userId)->firstOrFail();
-      $provinsis = Provinces::all();
+      // Cari karyawan berdasarkan ID
+      $karyawan = Karyawan::find($id);
 
-      $parseAlamat = function ($alamat) {
-          $parts = explode(', ', $alamat);
-          $parsed = [];
-          foreach ($parts as $part) {
-              if (preg_match('/^(RT|RW) (\d+)/', $part, $matches)) {
-                  $parsed[strtolower($matches[1])] = $matches[2];
-              } elseif (preg_match('/^(Desa|Kecamatan|Kabupaten|Provinsi) (.+)$/', $part, $matches)) {
-                  $parsed[strtolower($matches[1])] = $matches[2];
-              } else {
-                  $parsed['jalan'] = $part;
-              }
-          }
-          return $parsed;
-      };
+      // Jika karyawan tidak ditemukan, kembalikan pesan error
+      if (!$karyawan) {
+          return response()->json([
+              'status' => 'error',
+              'message' => 'Karyawan tidak ditemukan'
+          ], 404);
+      }
 
-      $alamatKtp = $parseAlamat($karyawan->alamat_ktp);
-      $alamatDomisili = $karyawan->alamat_domisili ? $parseAlamat($karyawan->alamat_domisili) : null;
+      // Hapus karyawan
+      $karyawan->delete();
 
+      // Kembalikan response sukses
       return response()->json([
-          'karyawan' => $karyawan,
-          'provinsis' => $provinsis,
-          'alamat_ktp' => $alamatKtp,
-          'alamat_domisili' => $alamatDomisili,
+          'status' => 'success',
+          'message' => 'Karyawan berhasil dihapus'
       ]);
   }
+
 
 }

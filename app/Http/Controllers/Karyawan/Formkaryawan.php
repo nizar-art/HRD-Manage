@@ -102,12 +102,110 @@ class Formkaryawan extends Controller
   {
       $karyawan = Karyawan::find($id);
 
-      if (!$karyawan) {
-          return response()->json(['message' => 'Data tidak ditemukan'], 404);
+      // Parsing alamat KTP
+      $alamatKtpParts = $this->parseAlamat($karyawan->alamat_ktp);
+
+      // Parsing alamat domisili
+      $alamatDomisiliParts = $this->parseAlamat($karyawan->alamat_domisili);
+
+      return response()->json([
+          'karyawan' => $karyawan,
+          'alamat_ktp' => $alamatKtpParts,
+          'alamat_domisili' => $alamatDomisiliParts,
+      ]);
+  }
+
+  // Fungsi untuk parsing alamat kembali menjadi array
+  private function parseAlamat($alamat)
+  {
+      preg_match('/^(.*?), RT (\d+)\/RW (\d+), DESA (.*?), KECAMATAN (.*?), (.*?), PROVINSI (.*?)$/', $alamat, $matches);
+
+      if (!$matches) {
+          return null;
       }
 
-      return response()->json(['message' => 'Data ditemukan', 'data' => $karyawan], 200);
+      return [
+          'jalan' => $matches[1] ?? '',
+          'rt' => $matches[2] ?? '',
+          'rw' => $matches[3] ?? '',
+          'desa' => $matches[4] ?? '',
+          'kecamatan' => $matches[5] ?? '',
+          'kabupaten' => $matches[6] ?? '',
+          'provinsi' => $matches[7] ?? '',
+      ];
   }
+
+  // Update data for Karyawan
+  public function updateKaryawan(Request $request, $id)
+  {
+    $request->validate([
+        'nama_lengkap' => 'required|string|max:255',
+        'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+        'tempat_lahir' => 'required|string|max:255',
+        'tanggal_lahir' => 'required|date',
+        'alamat_ktp' => 'required|array',
+        'alamat_ktp.jalan' => 'required|string|max:255',
+        'alamat_ktp.rt' => 'required|string|max:3',
+        'alamat_ktp.rw' => 'required|string|max:3',
+        'alamat_ktp.provinsi' => 'required|string|max:255',
+        'alamat_ktp.kabupaten' => 'required|string|max:255',
+        'alamat_ktp.kecamatan' => 'required|string|max:255',
+        'alamat_ktp.desa' => 'required|string|max:255',
+        'alamat_domisili' => 'nullable|array',
+        'alamat_domisili.jalan' => 'nullable|string|max:255',
+        'alamat_domisili.rt' => 'nullable|string|max:3',
+        'alamat_domisili.rw' => 'nullable|string|max:3',
+        'alamat_domisili.provinsi' => 'nullable|string|max:255',
+        'alamat_domisili.kabupaten' => 'nullable|string|max:255',
+        'alamat_domisili.kecamatan' => 'nullable|string|max:255',
+        'alamat_domisili.desa' => 'nullable|string|max:255',
+        'email' => 'required|email|max:255',
+        'nomor_nik_ktp' => 'required|string|max:20',
+        'nomor_npwp' => 'nullable|string|max:20',
+        'nomor_rekening' => 'nullable|string|max:20',
+        'nomor_hp' => 'required|string|max:15',
+        'ibu_kandung' => 'required|string|max:255',
+    ]);
+
+    // Salin data alamat domisili dari KTP jika kosong
+    $alamatDomisili = $request->input('alamat_domisili', $request->input('alamat_ktp'));
+
+    $formatAlamat = function ($alamat) {
+        return "{$alamat['jalan']}, RT {$alamat['rt']}/RW {$alamat['rw']}, DESA {$alamat['desa']}, KECAMATAN {$alamat['kecamatan']}, {$alamat['kabupaten']}, PROVINSI {$alamat['provinsi']}";
+    };
+
+    $alamatKtp = $formatAlamat($request->input('alamat_ktp'));
+    $alamatDomisili = $formatAlamat($alamatDomisili);
+
+    // Cari karyawan berdasarkan ID
+    $karyawan = Karyawan::find($id);
+
+    if (!$karyawan) {
+        return response()->json(['message' => 'Data karyawan tidak ditemukan'], 404);
+    }
+
+    // Update data karyawan
+    $karyawan->update([
+        'nama_lengkap' => $request->input('nama_lengkap'),
+        'jenis_kelamin' => $request->input('jenis_kelamin'),
+        'tempat_lahir' => $request->input('tempat_lahir'),
+        'tanggal_lahir' => $request->input('tanggal_lahir'),
+        'alamat_ktp' => $alamatKtp,
+        'alamat_domisili' => $alamatDomisili,
+        'email' => $request->input('email'),
+        'agama' => $request->input('agama'),
+        'nomor_nik_ktp' => $request->input('nomor_nik_ktp'),
+        'nomor_npwp' => $request->input('nomor_npwp'),
+        'nomor_rekening' => $request->input('nomor_rekening'),
+        'nomor_hp' => $request->input('nomor_hp'),
+        'golongan_darah' => $request->input('golongan_darah'),
+        'ibu_kandung' => $request->input('ibu_kandung'),
+        'status_pernikahan' => $request->input('status_pernikahan'),
+    ]);
+
+    return response()->json(['message' => 'Data berhasil diperbarui', 'data' => $karyawan], 200);
+  }
+
 
 
   // Store data for Riwayat Pendidikan

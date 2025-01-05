@@ -19,92 +19,6 @@
 
 @section('content')
 
-    <div class="row g-6 mb-6">
-        <div class="col-sm-6 col-xl-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div class="content-left">
-                            <span class="text-heading">Users</span>
-                            <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">t</h4>
-                                <p class="text-success mb-0">0</p>
-                            </div>
-                            <small class="mb-0">Total Users</small>
-                        </div>
-                        <div class="avatar">
-                            <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti ti-user ti-26px"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div class="content-left">
-                            <span class="text-heading">Verified Users</span>
-                            <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">t</h4>
-                                <p class="text-success mb-0">(+95%)</p>
-                            </div>
-                            <small class="mb-0">Recent analytics </small>
-                        </div>
-                        <div class="avatar">
-                            <span class="avatar-initial rounded bg-label-success">
-                                <i class="ti ti-user-check ti-26px"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div class="content-left">
-                            <span class="text-heading">Duplicate Users</span>
-                            <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">t</h4>
-                                <p class="text-success mb-0">(0%)</p>
-                            </div>
-                            <small class="mb-0">Recent analytics</small>
-                        </div>
-                        <div class="avatar">
-                            <span class="avatar-initial rounded bg-label-danger">
-                                <i class="ti ti-users ti-26px"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-xl-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div class="content-left">
-                            <span class="text-heading">Verification Pending</span>
-                            <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">t</h4>
-                                <p class="text-danger mb-0">(+6%)</p>
-                            </div>
-                            <small class="mb-0">Recent analytics</small>
-                        </div>
-                        <div class="avatar">
-                            <span class="avatar-initial rounded bg-label-warning">
-                                <i class="ti ti-user-search ti-26px"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Users List Table -->
     <div class="card">
         <div class="card-header border-bottom">
@@ -138,34 +52,35 @@
                     <input type="hidden" name="id" id="id">
                     <!-- Karyawan -->
                     <div class="mb-6">
-                      <label class="form-label" for="id_karyawan">Karyawan</label>
-                      <select class="select2" id="id_karyawan" name="id_karyawan" required>
-                        <option value="" disabled selected>Select a jabatan</option>
-                        @foreach ($karyawan as $karyawan)
-                          <option value="{{ $karyawan->id }}">{{ $karyawan->nama_lengkap}}</option>
-                        @endforeach
-                      </select>
+                        <label class="form-label" for="id_karyawan">Karyawan</label>
+                        <select class="select2" id="id_karyawan" name="id_karyawan" required>
+                            <option value="" disabled selected>Select a jabatan</option>
+                            @foreach ($karyawan as $karyawan)
+                                <option value="{{ $karyawan->id }}">{{ $karyawan->nama_lengkap }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <!-- Start Date -->
                     <div class="mb-6">
-                      <label class="form-label" for="kontrak-kerja-start-date">Start Date</label>
-                      <input type="date" class="form-control" id="kontrak-kerja-start-date" name="start_date" required />
+                        <label class="form-label" for="kontrak-kerja-start-date">Start Date</label>
+                        <input type="date" class="form-control" id="kontrak-kerja-start-date" name="start_date"
+                            required />
                     </div>
 
                     <!-- End Date -->
                     <div class="mb-6">
-                      <label class="form-label" for="kontrak-kerja-end-date">End Date</label>
-                      <input type="date" class="form-control" id="kontrak-kerja-end-date" name="end_date" required />
+                        <label class="form-label" for="kontrak-kerja-end-date">End Date</label>
+                        <input type="date" class="form-control" id="kontrak-kerja-end-date" name="end_date" required />
                     </div>
 
                     <!-- Status -->
                     <div class="mb-6">
-                      <label class="form-label" for="kontrak-kerja-status">Status</label>
-                      <select class="form-select" id="kontrak-kerja-status" name="status" required>
-                          <option value="Baru">Baru</option>
-                          <option value="Lanjut">Lanjut</option>
-                      </select>
+                        <label class="form-label" for="kontrak-kerja-status">Status</label>
+                        <select class="form-select" id="kontrak-kerja-status" name="status" required>
+                            <option value="Baru">Baru</option>
+                            <option value="Lanjut">Lanjut</option>
+                        </select>
                     </div>
 
 

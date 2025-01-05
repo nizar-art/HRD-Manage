@@ -178,8 +178,10 @@ Route::get('/', [LoginCover::class, 'index'])->name('auth-login-cover');
 Route::get('/login', [LoginCover::class, 'index'])->name('auth-login-cover');
 Route::post('/login', [LoginCover::class, 'login'])->name('login');
 Route::get('/forgot-password', [ForgotPasswordCover::class, 'index'])->name('auth-forgot-password-cover');
+Route::post('/forgot-password', [ForgotPasswordCover::class, 'sendResetLink'])->name('auth-forgot-password-send');
 Route::get('/verify-email', [VerifyEmailCover::class, 'index'])->name('auth-verify-email-cover');
-Route::get('/reset-password-cover', [ResetPasswordCover::class, 'index'])->name('auth-reset-password-cover');
+Route::get('/reset-password', [ResetPasswordCover::class, 'index'])->name('reset-password');
+    Route::post('/reset-password', [ResetPasswordCover::class,'update'])->name('password.update');
 Route::get('/two-steps', [TwoStepsCover::class, 'index'])->name('auth-two-steps-cover');
 
 //auth google
@@ -210,6 +212,8 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/form/karyawan/storeRiwayatPendidikan', [Formkaryawan::class, 'storeRiwayatPendidikan'])->name('Form-karyawan-storeRiwayatPendidikan');
   Route::post('/form/karyawan/storeKeluarga', [Formkaryawan::class, 'storeKeluarga'])->name('Form-karyawan-storeKeluarga');
   Route::get('/profile/karyawan/editKaryawan/{id}', [Formkaryawan::class, 'editKaryawan'])->name('Hrd-editKaryawan');
+  Route::put('/profile/karyawan/updateKaryawan/{id}', [Formkaryawan::class, 'updateKaryawan'])->name('Hrd-updateKaryawan');
+
 
   //form karyawan
   Route::get('/form/pribadi/karyawan', [FormProfile::class, 'index'])->name('form-pribadi-karyawan');
@@ -243,7 +247,7 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/profile/karyawan/storeKaryawan', [ProfileKaryawanAdd::class, 'storeKaryawanHrd'])->name('Hrd-storeKaryawan');
   Route::post('/profile/karyawan/storeRiwayatPendidikan', [ProfileKaryawanAdd::class, 'storeRiwayatPendidikanHrd'])->name('Hrd-storeRiwayatPendidikan');
   Route::post('/profile/karyawan/storeKeluarga', [ProfileKaryawanAdd::class, 'storeKeluargaHrd'])->name('Hrd-storeKeluarga');
-  Route::get('/profile-karyawan/{user_id}/edit', [EditProfileKaryawan::class, 'edit'])->name('profile.karyawan.edit');
+  Route::delete('/profile/karyawan/{id}', [ProfileKaryawanList::class, 'delete']);
   Route::get('/detail/karyawan/{id}', [DetailKaryawan::class, 'index'])->name('detail.karyawan.view');
 
   Route::get('/informasi/kepegawaian', [InformasiKepegawaian::class, 'index'])->name('hrd-informasi-kepegawaian');
@@ -355,8 +359,8 @@ Route::middleware(['auth'])->group(function () {
 
   // Route::get('/pages/faq', [Faq::class, 'index'])->name('pages-faq');
   // Route::get('/pages/pricing', [PagesPricing::class, 'index'])->name('pages-pricing');
-  // Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
-  // Route::get('/pages/misc-under-maintenance', [MiscUnderMaintenance::class, 'index'])->name('pages-misc-under-maintenance');
+  Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
+  Route::get('/pages/misc-under-maintenance', [MiscUnderMaintenance::class, 'index'])->name('pages-misc-under-maintenance');
   // Route::get('/pages/misc-comingsoon', [MiscComingSoon::class, 'index'])->name('pages-misc-comingsoon');
   // Route::get('/pages/misc-not-authorized', [MiscNotAuthorized::class, 'index'])->name('pages-misc-not-authorized');
 

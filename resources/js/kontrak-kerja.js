@@ -117,17 +117,23 @@ $(function () {
           render: function (data, type, full, meta) {
             var status = full['status'];
             var badgeClass;
-              switch (status) {
-                  case 'Baru':
-                      badgeClass = 'bg-label-success';
-                      break;
-                  case 'Lanjut':
-                      badgeClass = 'bg-label-warning';
-                      break;
-              }
-              return '<div class="d-flex justify-content-center align-items-center">' +
-                      '<span class="badge ' + badgeClass + ' text-capitalize">' + status + '</span>' +
-                    '</div>';
+            switch (status) {
+              case 'Baru':
+                badgeClass = 'bg-label-success';
+                break;
+              case 'Lanjut':
+                badgeClass = 'bg-label-warning';
+                break;
+            }
+            return (
+              '<div class="d-flex justify-content-center align-items-center">' +
+              '<span class="badge ' +
+              badgeClass +
+              ' text-capitalize">' +
+              status +
+              '</span>' +
+              '</div>'
+            );
           }
         },
         {
@@ -138,11 +144,11 @@ $(function () {
           orderable: false,
           render: function (data, type, full, meta) {
             const editId = full['id'];
-              const deleteId = full['id'];
-              return (
-                '<div class="d-flex align-items-center gap-50">' +
-                `<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${editId}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="ti ti-edit"></i></button>` +
-                `<button class="btn btn-sm btn-icon delete-record btn-text-secondary rounded-pill waves-effect" data-id="${deleteId}"><i class="ti ti-trash"></i></button>` +
+            const deleteId = full['id'];
+            return (
+              '<div class="d-flex align-items-center gap-50">' +
+              `<button class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect" data-id="${editId}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><i class="ti ti-edit"></i></button>` +
+              `<button class="btn btn-sm btn-icon delete-record btn-text-secondary rounded-pill waves-effect" data-id="${deleteId}"><i class="ti ti-trash"></i></button>` +
               '<button class="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></button>' +
               '<div class="dropdown-menu dropdown-menu-end m-0">' +
               '<a href="javascript:;" class="dropdown-item view-record" data-id="' +
@@ -184,12 +190,12 @@ $(function () {
           buttons: [
             {
               extend: 'print',
-              title: 'Users',
-              text: '<i class="ti ti-printer me-2" ></i>Print',
+              title: '<div style="text-align: center;">Data Kontrak Kerja</div>',
+              text: '<i class="ti ti-printer me-2"></i>Print',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be print
+                columns: [1, 2, 3, 4, 5, 6],
+                // Prevent avatar from being printed
                 format: {
                   body: function (inner, coldex, rowdex) {
                     if (inner.length <= 0) return inner;
@@ -200,14 +206,16 @@ $(function () {
                         result = result + item.lastChild.firstChild.textContent;
                       } else if (item.innerText === undefined) {
                         result = result + item.textContent;
-                      } else result = result + item.innerText;
+                      } else {
+                        result = result + item.innerText;
+                      }
                     });
                     return result;
                   }
                 }
               },
               customize: function (win) {
-                //customize print view for dark
+                // Customize print view for dark mode
                 $(win.document.body)
                   .css('color', config.colors.headingColor)
                   .css('border-color', config.colors.borderColor)
@@ -221,38 +229,13 @@ $(function () {
               }
             },
             {
-              extend: 'csv',
-              title: 'Users',
-              text: '<i class="ti ti-file-text me-2" ></i>Csv',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
               extend: 'excel',
-              title: 'Users',
+              title: 'Data Kontrak',
               text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
+                columns: [1, 2, 3, 4, 5, 6],
+                // Prevent avatar from being displayed
                 format: {
                   body: function (inner, coldex, rowdex) {
                     if (inner.length <= 0) return inner;
@@ -263,7 +246,9 @@ $(function () {
                         result = result + item.lastChild.firstChild.textContent;
                       } else if (item.innerText === undefined) {
                         result = result + item.textContent;
-                      } else result = result + item.innerText;
+                      } else {
+                        result = result + item.innerText;
+                      }
                     });
                     return result;
                   }
@@ -272,12 +257,12 @@ $(function () {
             },
             {
               extend: 'pdf',
-              title: 'Users',
+              title: 'Data Kontrak Kerja',
               text: '<i class="ti ti-file-code-2 me-2"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
+                columns: [1, 2, 3, 4, 5, 6],
+                // Prevent avatar from being displayed
                 format: {
                   body: function (inner, coldex, rowdex) {
                     if (inner.length <= 0) return inner;
@@ -288,32 +273,9 @@ $(function () {
                         result = result + item.lastChild.firstChild.textContent;
                       } else if (item.innerText === undefined) {
                         result = result + item.textContent;
-                      } else result = result + item.innerText;
-                    });
-                    return result;
-                  }
-                }
-              }
-            },
-            {
-              extend: 'copy',
-              title: 'Users',
-              text: '<i class="ti ti-copy me-2" ></i>Copy',
-              className: 'dropdown-item',
-              exportOptions: {
-                columns: [1, 2, 3, 4, 5],
-                // prevent avatar to be display
-                format: {
-                  body: function (inner, coldex, rowdex) {
-                    if (inner.length <= 0) return inner;
-                    var el = $.parseHTML(inner);
-                    var result = '';
-                    $.each(el, function (index, item) {
-                      if (item.classList !== undefined && item.classList.contains('user-name')) {
-                        result = result + item.lastChild.firstChild.textContent;
-                      } else if (item.innerText === undefined) {
-                        result = result + item.textContent;
-                      } else result = result + item.innerText;
+                      } else {
+                        result = result + item.innerText;
+                      }
                     });
                     return result;
                   }
@@ -331,6 +293,7 @@ $(function () {
           }
         }
       ],
+
       // For responsive popup
       responsive: {
         details: {
@@ -440,21 +403,21 @@ $(function () {
     // changing the title of offcanvas
     $('#offcanvasAddUserLabel').html('Edit Kontrak Kerja');
 
-   // Send GET request to fetch data
+    // Send GET request to fetch data
     $.get(`/edit/kontrak-kerja/${id}`, function (response) {
-        if (response.data) {
-            const data = response.data;
+      if (response.data) {
+        const data = response.data;
 
-            // Populate the form with the data
-            $('#id').val(data.id);
-            $('#id_karyawan').val(data.id_karyawan); // Assuming dropdown or input
-            $('#start_date').val(data.star_date);
-            $('#end_date').val(data.and_date);
-            $('#status').val(data.status); // Assuming dropdown or input
+        // Populate the form with the data
+        $('#id').val(data.id);
+        $('#id_karyawan').val(data.id_karyawan); // Assuming dropdown or input
+        $('#start_date').val(data.star_date);
+        $('#end_date').val(data.and_date);
+        $('#status').val(data.status); // Assuming dropdown or input
 
-            // Open the modal or show the edit form
-            $('#editModal').modal('show'); // Assuming you're using a Bootstrap modal
-        }
+        // Open the modal or show the edit form
+        $('#editModal').modal('show'); // Assuming you're using a Bootstrap modal
+      }
     });
   });
 
@@ -552,7 +515,11 @@ $(function () {
         Swal.fire({
           icon: 'success',
           title: kontrakKerjaId ? 'Successfully Updated!' : 'Successfully Added!',
-          text: response.message || (kontrakKerjaId ? 'Kontrak Kerja has been updated successfully.' : 'New Kontrak Kerja has been added successfully.'),
+          text:
+            response.message ||
+            (kontrakKerjaId
+              ? 'Kontrak Kerja has been updated successfully.'
+              : 'New Kontrak Kerja has been added successfully.'),
           customClass: {
             confirmButton: 'btn btn-success'
           }
@@ -570,8 +537,7 @@ $(function () {
         });
       }
     });
-});
-
+  });
 
   // clearing form data when offcanvas hidden
   offCanvasForm.on('hidden.bs.offcanvas', function () {

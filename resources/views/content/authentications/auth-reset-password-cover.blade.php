@@ -3,7 +3,7 @@ $customizerHidden = 'customizer-hide';
 $configData = Helper::appClasses();
 @endphp
 
-@extends('layouts/layoutMaster')
+@extends('layouts.layoutMaster')
 
 @section('title', 'Reset Password Cover - Pages')
 
@@ -43,7 +43,7 @@ $configData = Helper::appClasses();
   <!-- /Logo -->
   <div class="authentication-inner row m-0">
 
-    <!-- /Left Text -->
+    <!-- Left Text -->
     <div class="d-none d-lg-flex col-lg-8 p-0">
       <div class="auth-cover-bg auth-cover-bg-color d-flex justify-content-center align-items-center">
         <img src="{{ asset('assets/img/illustrations/auth-reset-password-illustration-'.$configData['style'].'.png') }}" alt="auth-reset-password-cover" class="my-5 auth-illustration" data-app-light-img="illustrations/auth-reset-password-illustration-light.png" data-app-dark-img="illustrations/auth-reset-password-illustration-dark.png">
@@ -58,28 +58,51 @@ $configData = Helper::appClasses();
       <div class="w-px-400 mx-auto mt-12 pt-5">
         <h4 class="mb-1">Reset Password 🔒</h4>
         <p class="mb-6"><span class="fw-medium">Your new password must be different from previously used passwords</span></p>
-        <form id="formAuthentication" class="mb-6" action="{{url('auth/login-cover')}}" method="GET">
+
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <ul>
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
+        @if (session('status'))
+          <div class="alert alert-success">
+            {{ session('status') }}
+          </div>
+        @endif
+
+        <form id="formAuthentication" class="mb-6" action="{{ route('password.update') }}" method="POST">
+          @csrf
+          <input type="hidden" name="token" value="{{ $token }}">
+          <input type="hidden" name="email" value="{{ $email }}">
+
           <div class="mb-6 form-password-toggle">
             <label class="form-label" for="password">New Password</label>
             <div class="input-group input-group-merge">
-              <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+              <input type="password" id="password" class="form-control" name="password" placeholder="Enter new password" required />
               <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
             </div>
           </div>
+
           <div class="mb-6 form-password-toggle">
-            <label class="form-label" for="confirm-password">Confirm Password</label>
+            <label class="form-label" for="password_confirmation">Confirm Password</label>
             <div class="input-group input-group-merge">
-              <input type="password" id="confirm-password" class="form-control" name="confirm-password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+              <input type="password" id="password_confirmation" class="form-control" name="password_confirmation" placeholder="Confirm your password" required />
               <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
             </div>
           </div>
+
           <button class="btn btn-primary d-grid w-100 mb-6">
-            Set new password
+            Set New Password
           </button>
           <div class="text-center">
-            <a href="{{url('auth/login-cover')}}">
+            <a href="{{ route('auth-login-cover') }}">
               <i class="ti ti-chevron-left scaleX-n1-rtl me-1_5"></i>
-              Back to login
+              Back to Login
             </a>
           </div>
         </form>
@@ -89,3 +112,4 @@ $configData = Helper::appClasses();
   </div>
 </div>
 @endsection
+

@@ -9,7 +9,7 @@
         'resources/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.scss',
         'resources/assets/vendor/libs/select2/select2.scss', // Fix dari select2.sccs menjadi select2.scss
         'resources/assets/vendor/libs/@form-validation/form-validation.scss',
-        'resources/assets/vendor/libs/sweetalert2/sweetalert2.scss'
+        'resources/assets/vendor/libs/sweetalert2/sweetalert2.scss',
     ])
 @endsection
 
@@ -24,7 +24,7 @@
         'resources/assets/vendor/libs/sweetalert2/sweetalert2.js',
         'resources/assets/vendor/libs/@form-validation/popular.js',
         'resources/assets/vendor/libs/@form-validation/bootstrap5.js',
-        'resources/assets/vendor/libs/@form-validation/auto-focus.js'
+        'resources/assets/vendor/libs/@form-validation/auto-focus.js',
     ])
 @endsection
 
@@ -42,14 +42,12 @@
                     <div class="col-sm-6 col-lg-3">
                         <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
                             <div>
-                                <p class="mb-1">In-store Sales</p>
-                                <h4 class="mb-1">$5,345.43</h4>
-                                <p class="mb-0"><span class="me-2">5k orders</span><span
-                                        class="badge bg-label-success">+5.7%</span></p>
+                                <p class="mb-1">Total Users</p>
+                                <h4 class="mb-1">{{ $totalUsers }}</h4>
+                                <p class="mb-0"><span class="me-2">Total users in the system</span></p>
                             </div>
                             <span class="avatar me-sm-6">
-                                <span class="avatar-initial rounded"><i
-                                        class="ti-28px ti ti-smart-home text-heading"></i></span>
+                                <span class="avatar-initial rounded"><i class="ti-28px ti ti-users text-heading"></i></span>
                             </span>
                         </div>
                         <hr class="d-none d-sm-block d-lg-none me-6">
@@ -57,14 +55,13 @@
                     <div class="col-sm-6 col-lg-3">
                         <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
                             <div>
-                                <p class="mb-1">Website Sales</p>
-                                <h4 class="mb-1">$674,347.12</h4>
-                                <p class="mb-0"><span class="me-2">21k orders</span><span
-                                        class="badge bg-label-success">+12.4%</span></p>
+                                <p class="mb-1">Total Employees</p>
+                                <h4 class="mb-1">{{ $totalKaryawan }}</h4>
+                                <p class="mb-0"><span class="me-2">Total number of employees</span></p>
                             </div>
                             <span class="avatar p-2 me-lg-6">
                                 <span class="avatar-initial rounded"><i
-                                        class="ti-28px ti ti-device-laptop text-heading"></i></span>
+                                        class="ti-28px ti ti-briefcase text-heading"></i></span>
                             </span>
                         </div>
                         <hr class="d-none d-sm-block d-lg-none">
@@ -72,29 +69,29 @@
                     <div class="col-sm-6 col-lg-3">
                         <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
                             <div>
-                                <p class="mb-1">Discount</p>
-                                <h4 class="mb-1">$14,235.12</h4>
-                                <p class="mb-0">6k orders</p>
+                                <p class="mb-1">Total Kepegawaian</p>
+                                <h4 class="mb-1">{{ $totalKepegawaian }}</h4>
+                                <p class="mb-0">Total staffing data</p>
                             </div>
                             <span class="avatar p-2 me-sm-6">
-                                <span class="avatar-initial rounded"><i class="ti-28px ti ti-gift text-heading"></i></span>
+                                <span class="avatar-initial rounded"><i class="ti-28px ti ti-users text-heading"></i></span>
                             </span>
                         </div>
                     </div>
                     <div class="col-sm-6 col-lg-3">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="mb-1">Affiliate</p>
-                                <h4 class="mb-1">$8,345.23</h4>
-                                <p class="mb-0"><span class="me-2">150 orders</span><span
-                                        class="badge bg-label-danger">-3.5%</span></p>
+                                <p class="mb-1">Total Kontrak Kerja</p>
+                                <h4 class="mb-1">{{ $totalKontrakKerja }}</h4>
+                                <p class="mb-0"><span class="me-2">Total contract workers</span></p>
                             </div>
                             <span class="avatar p-2">
                                 <span class="avatar-initial rounded"><i
-                                        class="ti-28px ti ti-wallet text-heading"></i></span>
+                                        class="ti-28px ti ti-file-text text-heading"></i></span>
                             </span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -133,8 +130,8 @@
                 <div id="data-pribadi" class="content">
                     <div class="card-body">
                         <div class="row">
-                            <input type="hidden" name="user_id" id="user_id"
-                                value="{{ \Illuminate\Support\Facades\Auth::user()->id }}">
+
+                            <input type="hidden" name="id" id="id">
 
                             <!-- Nama Lengkap -->
                             <div class="mb-6">
@@ -148,8 +145,8 @@
                                 <label class="form-label" for="jenis_kelamin">Jenis Kelamin</label>
                                 <select id="jenis_kelamin" name="jenis_kelamin" class="select2" required>
                                     <option selected disabled>Pilih Jenis Kelamin</option>
-                                    <option value="L">Laki-Laki</option>
-                                    <option value="P">Perempuan</option>
+                                    <option value="Laki-laki">Laki-Laki</option>
+                                    <option value="Perempuan">Perempuan</option>
                                 </select>
                             </div>
 
@@ -253,6 +250,7 @@
                                 </select>
                             </div>
 
+
                             <!-- Email -->
                             <div class="mb-6">
                                 <label class="form-label" for="email">Email</label>
@@ -264,12 +262,11 @@
                             <div class="mb-6">
                                 <label class="form-label" for="agama">Agama</label>
                                 <select id="agama" name="agama" class="select2" required>
-                                    <option selected disabled>Pilih Agama</option>
                                     <option value="Islam">Islam</option>
                                     <option value="Kristen">Kristen</option>
                                     <option value="Katolik">Katolik</option>
                                     <option value="Hindu">Hindu</option>
-                                    <option value="Buddha">Buddha</option>
+                                    <option value="Budha">Buddha</option>
                                     <option value="Konghucu">Konghucu</option>
                                 </select>
                             </div>
@@ -286,6 +283,14 @@
                                 <label class="form-label" for="nomor_npwp">Nomor NPWP</label>
                                 <input type="number" id="nomor_npwp" name="nomor_npwp" class="form-control"
                                     placeholder="Masukkan Nomor NPWP" />
+                            </div>
+
+                            <!-- Nomor rekening -->
+                            <div class="mb-6">
+                                <label class="form-label" for="nomor_rekening">Nomor Rekening <span
+                                        class="text">(Opsional)</span></label>
+                                <input type="text" id="nomor_rekening" name="nomor_rekening" class="form-control"
+                                    placeholder="Contoh: BCA 123" />
                             </div>
 
                             <!-- Nomor HP -->
@@ -313,8 +318,8 @@
                                     <option value="O">O</option>
                                     <option value="A-">-A</option>
                                     <option value="B-">-B</option>
-                                    <option value="AB-">-AB</option>
                                     <option value="O-">-O</option>
+                                    <option value="AB-">-AB</option>
                                 </select>
                             </div>
 
@@ -331,9 +336,8 @@
 
 
                         </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                        </div>
+                        <button type="submit" id="formEdit" class="btn btn-primary me-3 data-submit">Submit</button>
+                        <button type="reset" class="btn btn-label-danger" data-bs-dismiss="offcanvas">Cancel</button>
                     </div>
                 </div>
             </form>

@@ -25,16 +25,16 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start justify-content-between">
                         <div class="content-left">
-                            <span class="text-heading">Users</span>
+                            <span class="text-heading">Total Karyawan</span>
                             <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">total</h4>
-                                <p class="text-success mb-0">0</p>
+                                <h4 class="mb-0 me-2">{{ $totalKaryawan }}</h4>
+                                <p class="text-success mb-0">(+100%)</p> <!-- Display total employees -->
                             </div>
-                            <small class="mb-0">Total Users</small>
+                            <small class="mb-0">Total Employees</small>
                         </div>
                         <div class="avatar">
                             <span class="avatar-initial rounded bg-label-primary">
-                                <i class="ti ti-user ti-26px"></i>
+                                <i class="ti ti-users ti-26px"></i> <!-- Updated icon for employees -->
                             </span>
                         </div>
                     </div>
@@ -46,16 +46,16 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start justify-content-between">
                         <div class="content-left">
-                            <span class="text-heading">Verified Users</span>
+                            <span class="text-heading">Total Departments</span>
                             <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">total</h4>
-                                <p class="text-success mb-0">0</p>
+                                <h4 class="mb-0 me-2">{{ $totalDepartments }}</h4>
+                                <p class="text-success mb-0">(+90%)</p> <!-- Display total departments -->
                             </div>
-                            <small class="mb-0">Recent analytics </small>
+                            <small class="mb-0">Total Departments</small>
                         </div>
                         <div class="avatar">
                             <span class="avatar-initial rounded bg-label-success">
-                                <i class="ti ti-user-check ti-26px"></i>
+                                <i class="ti ti-building ti-26px"></i> <!-- Icon representing departments -->
                             </span>
                         </div>
                     </div>
@@ -67,16 +67,16 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start justify-content-between">
                         <div class="content-left">
-                            <span class="text-heading">Duplicate Users</span>
+                            <span class="text-heading">Total Jabatan</span>
                             <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">total</h4>
-                                <p class="text-success mb-0">0</p>
+                                <h4 class="mb-0 me-2">{{ $totalJabatan }}</h4>
+                                <p class="text-success mb-0">(100%)</p> <!-- Display total job positions -->
                             </div>
-                            <small class="mb-0">Recent analytics</small>
+                            <small class="mb-0">Total Job Positions</small>
                         </div>
                         <div class="avatar">
                             <span class="avatar-initial rounded bg-label-danger">
-                                <i class="ti ti-users ti-26px"></i>
+                                <i class="ti ti-clipboard ti-26px"></i> <!-- Icon representing job positions -->
                             </span>
                         </div>
                     </div>
@@ -88,22 +88,24 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start justify-content-between">
                         <div class="content-left">
-                            <span class="text-heading">Verification Pending</span>
+                            <span class="text-heading">Total Kontrak Kepegawaian</span>
                             <div class="d-flex align-items-center my-1">
-                                <h4 class="mb-0 me-2">total</h4>
-                                <p class="text-danger mb-0">0</p>
+                                <h4 class="mb-0 me-2">{{ $totalKepegawaian }}</h4>
+                                <p class="text-danger mb-0">(100%)</p>
+                                <!-- Display total contract workers -->
                             </div>
-                            <small class="mb-0">Recent analytics</small>
+                            <small class="mb-0">Total Contract Workers</small>
                         </div>
                         <div class="avatar">
                             <span class="avatar-initial rounded bg-label-warning">
-                                <i class="ti ti-user-search ti-26px"></i>
+                                <i class="ti ti-file-text ti-26px"></i> <!-- Icon representing contracts -->
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
     <!-- Users List Table -->
     <div class="card">
@@ -139,58 +141,60 @@
                     <input type="hidden" name="id" id="id">
                     <!-- Karyawan -->
                     <div class="mb-6">
-                      <label class="form-label" for="id_karyawan">Karyawan</label>
-                      <select class="select2" id="id_karyawan" name="id_karyawan" required>
-                        <option value="" disabled selected>Select a jabatan</option>
-                        @foreach ($karyawan as $karyawan)
-                          <option value="{{ $karyawan->id }}">{{ $karyawan->nama_lengkap}}</option>
-                        @endforeach
-                      </select>
+                        <label class="form-label" for="id_karyawan">Karyawan</label>
+                        <select class="select2" id="id_karyawan" name="id_karyawan" required>
+                            <option value="" disabled selected>Select a jabatan</option>
+                            @foreach ($karyawan as $karyawan)
+                                <option value="{{ $karyawan->id }}">{{ $karyawan->nama_lengkap }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <!-- Perusahaan -->
                     <div class="mb-6">
-                      <label class="form-label" for="perusahaan">Perusahaan</label>
-                      <select id="perusahaan" name="perusahaan" class="form-select ">
-                        <option value="" disabled selected>Select a company</option>
-                        <option value="LKI">LKI</option>
-                        <option value="Green Cold">Green Cold</option>
-                      </select>
+                        <label class="form-label" for="perusahaan">Perusahaan</label>
+                        <select id="perusahaan" name="perusahaan" class="form-select ">
+                            <option value="" disabled selected>Select a company</option>
+                            <option value="LKI">LKI</option>
+                            <option value="Green Cold">Green Cold</option>
+                        </select>
                     </div>
                     <!-- Nomor Induk Karyawan -->
                     <div class="mb-6">
-                      <label class="form-label" for="nomer_kerja">Nomor Induk Karyawan</label>
-                      <input type="text" id="nomer_kerja" name="nomer_kerja" class="form-control" placeholder="Masukkan Nomor Induk Karyawan" required />
+                        <label class="form-label" for="nomer_kerja">Nomor Induk Karyawan</label>
+                        <input type="text" id="nomer_kerja" name="nomer_kerja" class="form-control"
+                            placeholder="Masukkan Nomor Induk Karyawan" required />
                     </div>
                     <!-- Tanggal Masuk -->
                     <div class="mb-6">
-                      <label class="form-label" for="tanggal_masuk">Tanggal Masuk</label>
-                      <input type="date" id="tanggal_masuk" name="tanggal_masuk" class="form-control" required />
+                        <label class="form-label" for="tanggal_masuk">Tanggal Masuk</label>
+                        <input type="date" id="tanggal_masuk" name="tanggal_masuk" class="form-control" required />
                     </div>
                     <!-- Jabatan -->
                     <div class="mb-6">
-                      <label class="form-label" for="id_jabatan">Jabatan</label>
-                      <select id="id_jabatan" name="id_jabatan" class="form-select ">
-                        <option value="" disabled selected>Select a jabatan</option>
-                        @foreach ($jabatan as $jabatan)
-                          <option value="{{ $jabatan->id }}">{{ $jabatan->name_jabatan }}</option>
-                        @endforeach
-                      </select>
+                        <label class="form-label" for="id_jabatan">Jabatan</label>
+                        <select id="id_jabatan" name="id_jabatan" class="form-select ">
+                            <option value="" disabled selected>Select a jabatan</option>
+                            @foreach ($jabatan as $jabatan)
+                                <option value="{{ $jabatan->id }}">{{ $jabatan->name_jabatan }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <!-- Departemen -->
                     <div class="mb-6">
-                      <label class="form-label" for="id_department">Departemen</label>
-                      <select id="id_department" name="id_department" class="form-select">
-                        <option value="" disabled selected>Select a department</option>
-                        @foreach ($departments as $department)
-                          <option value="{{ $department->id }}">{{ $department->name_department }}</option>
-                        @endforeach
-                      </select>
+                        <label class="form-label" for="id_department">Departemen</label>
+                        <select id="id_department" name="id_department" class="form-select">
+                            <option value="" disabled selected>Select a department</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->id }}">{{ $department->name_department }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <!-- Lokasi Kerja -->
                     <div class="mb-6">
-                      <label class="form-label" for="lokasi_kerja">Lokasi Kerja</label>
-                      <input type="text" id="lokasi_kerja" name="lokasi_kerja" class="form-control" placeholder="Masukkan Lokasi Kerja" required />
+                        <label class="form-label" for="lokasi_kerja">Lokasi Kerja</label>
+                        <input type="text" id="lokasi_kerja" name="lokasi_kerja" class="form-control"
+                            placeholder="Masukkan Lokasi Kerja" required />
                     </div>
 
 
